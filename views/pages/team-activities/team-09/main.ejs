@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <% include ../../../partials/header.ejs %>
+  </head>
+
+  <body>
+    <form action="./09/math" method="get" id="form">
+      <input type="number" name="num1" id="num1" />
+      <select name="operand" id="operand">
+        <option value="add">+</option>
+        <option value="sub">-</option>
+        <option value="mult">x</option>
+        <option value="div">÷</option>
+      </select>
+      <input type="number" name="num2" id="num2" />
+      <button type="submit">Calculate</button>
+      <button onclick="mathRequest()" type="button">AJAX</button>
+    </form>
+    <h1 id="result"></h1>
+    <script>
+      function mathRequest() {
+        var query = $('#form').serialize();
+        $.get("./09/math_service?" + query, function(data) {
+          $('#result').html(data.result);
+        });
+      }
+    </script>
+  </body>
+</html>
