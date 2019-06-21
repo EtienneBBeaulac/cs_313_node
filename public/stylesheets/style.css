@@ -44,3 +44,19 @@ body {
   background-color: #707070;
   color: white;
 }
+
+.product-box {
+  height: 250px;
+  background-color: white;
+  border: 1px solid #707070;
+  display: inline-flex;
+}
+
+.badge {
+  border-radius: 50px;
+}
+
+.product-cat {
+  margin-right: 10px;
+  display: inline-flex;
+}
