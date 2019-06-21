@@ -1,0 +1,46 @@
+body {
+  background: linear-gradient(to bottom right, #F5E2E2, #CEDEF0) fixed;
+}
+
+#top-welcome {
+  margin-top: 25px;
+}
+
+#navbar-main {
+  background: white;
+  border-bottom: 2px solid #707070;
+}
+
+.sign-in-navbar {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.cl-circle {
+  height: 100px;
+  width: 100px;
+  background-color: white;
+  border: 2px solid #707070;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 250%;
+  font-weight: bold;
+  color: #707070;
+}
+
+.cl-cat-title {
+  color: #707070;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.cl-item {
+  cursor: pointer;
+}
+
+.cl-item:hover .cl-circle {
+  background-color: #707070;
+  color: white;
+}

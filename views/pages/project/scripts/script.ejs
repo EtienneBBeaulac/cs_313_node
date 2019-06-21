@@ -1,0 +1,27 @@
+<script>
+  const DIR = "readyforbaby/";
+
+  addEventListener("popstate", function(e) {
+    ajax(window.location.pathname, '');
+    e.preventDefault();
+  });
+
+  function ajax(url, dir=window.location, query='') {
+    if (query != '') {
+      query = '?type=' + query;
+    }
+    $.get(dir + url + query, function(data) {
+      if (!data.html) {
+        return;
+      }
+      if (data.html.navbar) {
+        $("#navbar").html(data.html.navbar);
+      }
+      if (data.html.main) {
+        $("#main-page").html(data.html.main);
+        window.history.pushState("", "", data.data.url);
+      }
+      console.log(window.location);
+    });
+  }
+</script>

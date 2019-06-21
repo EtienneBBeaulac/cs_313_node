@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <% include ../partials/header.ejs %>
+  </head>
+  <body>
+    <div class="container-fluid" id="navbar">
+      <div class="row align-items-center mt-4">
+        <div class="col-md-4"></div>
+        <div class="col-md-4 text-center">
+          <h1>ReadyForBaby</h1>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-1 text-right">
+          <a onclick="clicked()">About Us</a>
+        </div>
+        <div class="col-md-1 text-right">
+          <a onclick="clicked()">Contact Us</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-5" id="main-page">
+      <div class="text-center">
+        <h2>Welcome.</h2><br>
+        <h4>Do you know what you need for baby?</h4><br>
+    
+        <button class="btn-choice" onclick="ajax('/categories', 'readyforbaby')">Yes.</button>
+        <button class="btn-choice" onclick="ajax('/checklist', 'readyforbaby')">I'm not sure.</button>
+      </div>
+    </div>
+
+    <% include ../partials/footer.ejs %>
+    <% include ../scripts/script.ejs %>
+
+  </body>
+</html>
