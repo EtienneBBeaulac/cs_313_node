@@ -41,6 +41,13 @@ const CHECKLIST_ITEMS = [
   },
 ];
 
+const POSTAL = {
+  stamped: "Letters (Stamped)",
+  metered: "Letters (Metered)",
+  flats: "Large Envelopes (Flats)",
+  retail: "First-Class Package Service—Retail",
+};
+
 app()
   .use(app.static(path.join(__dirname, "public")))
   .set("views", path.join(__dirname, "views"))
@@ -52,22 +59,31 @@ app()
   )
   .get("/readyforbaby/checklist", getChecklist)
   .get("/readyforbaby/checklist/:choice", getChoice)
-  .get("/readyforbaby/checklist/:choice/:products" , getProducts)
+  .get("/readyforbaby/checklist/:choice/:products", getProducts)
+  /***************************** TEAM ACTIVITIES *****************************/
   ////////// TA 09 //////////
   .get("/team-activities/09", (req, res) =>
     res.render("pages/team-activities/team-09/main")
   )
   .get("/team-activities/09/math", getMath)
   .get("/team-activities/09/math_service", sendMath)
+  /******************************* ASSIGNMENTS *******************************/
+  //////// PONDER 09 /////////
+  .get("/assignments/09", (req, res) =>
+    res.render("pages/assignments/09-prove/main.ejs", POSTAL)
+  )
+  .get("/assignments/09/get-rates", getRates)
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 /**
  * getChecklist
  * Callback function for displaying the checklist page
  */
-function getChecklist(req, res) { // TODO: Make this less static, ejs it
+function getChecklist(req, res) {
+  // TODO: Make this less static, ejs it
   sendJsonWithHtml(
-    req, res,
+    req,
+    res,
     [
       { type: "main", name: PROJECT_PARTIALS + "/checklist.ejs" },
       { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
@@ -83,9 +99,10 @@ function getChecklist(req, res) { // TODO: Make this less static, ejs it
  * Callback function for displaying the choice page
  */
 function getChoice(req, res) {
-  let renderData = getRenderDataFor(req.params['choice']);
+  let renderData = getRenderDataFor(req.params["choice"]);
   sendJsonWithHtml(
-    req, res,
+    req,
+    res,
     [
       {
         type: "main",
@@ -102,7 +119,8 @@ function getChoice(req, res) {
 
 function getProducts(req, res) {
   sendJsonWithHtml(
-    req, res,
+    req,
+    res,
     [
       {
         type: "main",
@@ -112,7 +130,11 @@ function getProducts(req, res) {
       { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
     ],
     {
-      url: "/readyforbaby/checklist/" + req.params['choice'] +  '/' + req.params['products'],
+      url:
+        "/readyforbaby/checklist/" +
+        req.params["choice"] +
+        "/" +
+        req.params["products"],
     }
   );
 }
@@ -153,6 +175,68 @@ function getRenderDataFor(choice) {
  */
 function getFileAsString(filepath) {
   return fs.readFileSync(filepath).toString("utf8");
+}
+
+function getRates(req, res) {
+  let query = req.query;
+  let prices = {
+    stamped: { 1: 0.55, 2: 0.7, 3: 0.85, 3.5: 1 },
+    metered: { 1: 0.5, 2: 0.65, 3: 0.8, 3.5: 0.95 },
+    flats: {
+      1: 1,
+      2: 1.15,
+      3: 1.3,
+      4: 1.45,
+      5: 1.6,
+      6: 1.75,
+      7: 1.9,
+      8: 2.05,
+      9: 2.2,
+      10: 2.35,
+      11: 2.5,
+      12: 2.65,
+      13: 2.8,
+    },
+    retail: { 3.3: 0.187 },
+  };
+  console.log(query);
+  console.log(query.postal);
+  console.log(prices[query.postal]);
+  let weightRange =
+    Math.trunc(query.weight) == query.weight
+      ? query.weight
+      : parseInt(query.weight) + 1;
+  if (query.postal === "stamped" || query.postal === "metered") {
+    if (weightRange > 3) weightRange = 3.5;
+  } else if (query.postal === "retail") {
+    weightRange = 3.3;
+  }
+  console.log(weightRange);
+  console.log(prices[query.postal][weightRange]);
+  let renderData = {
+    weight: query.weight,
+    postal: POSTAL[query.postal],
+    rate: prices[query.postal][weightRange],
+  };
+  sendJsonWithHtml(
+    req,
+    res,
+    [
+      {
+        type: "result",
+        name: "views/pages/assignments/09-prove/rate.ejs",
+        renderData: renderData,
+      },
+    ],
+    {}
+  );
+  // res.json({ rate: prices[query.postal][Math.trunc(query.weight) + 1] });
+  // if (query.postal === "stamped") {
+  // } else if (query.postal === "metered") {
+  // } else if (query.postal === "flats") {
+  // } else if (query.postal === "retail") {
+  // } else {
+  // }
 }
 
 function getMath(req, res) {

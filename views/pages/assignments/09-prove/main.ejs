@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <% include ./header.ejs %>
+  </head>
+  <body>
+    <div class="container text-center mt-3">
+      <h1>Postal Rate Calculator</h1>
+
+      <form
+        action="/assignments/09/get-rates"
+        method="get"
+        id="form"
+        class="mt-5"
+      >
+        <select name="postal" class="mb-3">
+          <option value="stamped" id="stamped"><%= stamped %></option>
+          <option value="metered" id="metered"><%= metered %></option>
+          <option value="flats" id="flats"><%= flats %></option>
+          <option value="retail" id="retail"><%= retail %></option> </select
+        ><br />
+        <input
+          class="mb-3"
+          name="weight"
+          id="weight"
+          placeholder="Enter weight in oz"
+        /><br />
+        <button class="btn btn-primary" type="submit">Check rates</button>
+      </form>
+      <div class="mt-5" id="result"></div>
+    </div>
+    <% include ./footer.ejs %>
+    <script>
+      $("#form").submit(function(e) {
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        let form = $(this);
+        let url = form.attr("action");
+        let method = form.attr("method");
+        let dataSer = form.serializeArray();
+        console.log($("#" + dataSer[0].value));
+
+        $.ajax({
+          type: method,
+          url: url,
+          data: form.serialize(),
+          success: function(data) {
+            console.log(data);
+            $("#result").html(data.html.result);
+            // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
