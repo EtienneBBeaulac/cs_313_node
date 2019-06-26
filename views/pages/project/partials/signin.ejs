@@ -1,0 +1,28 @@
+<div class="container">
+    <div class="row justify-content-center">
+      <div class="user-card pb-4">
+        <h1>Sign in</h1>
+        <form action="/readyforbaby/signin" method="post" id="signin">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" name="email" class="form-control" value="" required autofocus>
+          </div>
+          <div class="invalid-feedback mb-3 d-block"></div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" class="form-control" value="" required>
+            <div class="btn text small pointer" onclick="ajax('/reset-pw', '/readyforbaby')">Reset password</div>
+          </div>
+          <div class="invalid-feedback mb-3 d-block"></div>
+          <div class="d-flex justify-content-center mt-2">
+            <button type="submit" class="btn btn-pink">Log in</button>
+          </div>
+        </form>
+        <div class="mt-4">
+          <div class="d-flex justify-content-center links">
+            <div class="btn ml-2 text mb-3 pointer" onclick="ajax('/signup', '/readyforbaby')">Create an account</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,14 +1,21 @@
 <script>
   const DIR = "readyforbaby/";
 
+  // $('document').ready(getPage);
+
   addEventListener("popstate", function(e) {
-    ajax(window.location.pathname, '');
+    ajax(window.location.pathname, "", undefined, false);
     e.preventDefault();
   });
 
-  function ajax(url, dir=window.location, query='') {
-    if (query != '') {
-      query = '?type=' + query;
+  function ajax(
+    url = "",
+    dir = window.location,
+    query = "0",
+    pushState = true
+  ) {
+    if (query != "") {
+      query = "?r=" + query;
     }
     $.get(dir + url + query, function(data) {
       if (!data.html) {
@@ -19,9 +26,35 @@
       }
       if (data.html.main) {
         $("#main-page").html(data.html.main);
-        window.history.pushState("", "", data.data.url);
+        if (pushState) window.history.pushState("", "", data.data.url);
       }
+      $("html").show();
       console.log(window.location);
     });
   }
+
+  function getPage() {
+    console.log(window.location);
+    ajax();
+  }
+
+  $("#signin").submit(function(e) {
+    e.preventDefault();
+
+    let form = $(this);
+    let url = form.attr("action");
+    let method = form.attr("method");
+    let data = form.serialize();
+
+    $.ajax({
+      type: method,
+      url: url,
+      data: data,
+      success: function(data) {
+        console.log(data);
+        // $("#result").html(data.html.result);
+        // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
+      },
+    });
+  });
 </script>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Team 10</title>
+    <% include ../header.ejs %>
+  </head>
+  <body>
+    <form action="/team-activities/10/getPerson" id="form">
+      <label for="first">Enter first name</label>
+      <input type="text" id="first" name="first" />
+      <button type="submit">Get details</button>
+    </form>
+    <div class="" id="result"></div>
+
+    <script>
+      $("#form").submit(function(e) {
+        e.preventDefault();
+
+        let form = $(this);
+        let url = form.attr("action");
+        let data = form.serialize();
+
+        $.ajax({
+          type: "get",
+          url: url,
+          data: data,
+          success: function(data) {
+            console.log(data);
+            let strData = "";
+            for (let i = 0; i < data.length; i++) {
+              strData +=
+                "id: " +
+                data[i]._id +
+                "<br>Name: " +
+                data[i].first +
+                " " +
+                data[i].last +
+                "<br>DoB: " +
+                data[i].dob +
+                "<br><br>";
+            }
+            $("#result").html(strData);
+            // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
+          },
+        });
+      });
+    </script>
+    <% include ../footer.ejs %>
+  </body>
+</html>

@@ -2,12 +2,17 @@
   class="row justify-content-between align-items-center pr-4 pl-4 pt-2 pb-2"
   id="navbar-main"
 >
-  <div class="col-md-3">
+  <div class="col-sm-3">
     <h1>ReadyForBaby</h1>
   </div>
 
-  <div class="input-group col-md-6">
-    <input class="form-control rounded-pill" id="main-search" type="search" placeholder="What can we help you find?" />
+  <div class="input-group col-sm-6">
+    <input
+      class="form-control rounded-pill"
+      id="main-search"
+      type="search"
+      placeholder="What can we help you find?"
+    />
     <!-- <span class="input-group-append">
       <button class="btn btn-outline-success" type="button">
         Search
@@ -15,9 +20,18 @@
     </span> -->
   </div>
 
-  <div class="col-md-3 text-right">
-    <a onclick="clicked()" class="mr-5">Checklist</a>
-    <a onclick="clicked()" class="mr-5">Registry</a>
-    <a onclick="clicked()" class="sign-in-navbar">Sign in</a>
+  <div class="col-xs-3 text-right">
+    <a onclick="ajax('/categories', '/readyforbaby')" class="mr-4 pointer"
+      >Categories</a
+    >
+    <a onclick="ajax('/checklist', '/readyforbaby')" class="mr-4 pointer"
+      >Checklist</a
+    >
+    <a onclick="ajax('/registry', '/readyforbaby')" class="mr-4 pointer"
+      >Registry</a
+    >
+    <a onclick="ajax('/signin', '/readyforbaby')" class="sign-in-navbar pointer"
+      >Sign in</a
+    >
   </div>
 </div>
