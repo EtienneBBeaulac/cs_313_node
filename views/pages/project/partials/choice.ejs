@@ -3,19 +3,14 @@
   <h4 class="mb-4" id="page-subtitle"><%= subtitle %></h4>
 
   <div class="btn-group" role="group">
+      <% for (let i = 0; i < choices.length; i++) { %>
     <button
       class="btn btn-light btn-choice"
-      id="choice1"
-      onclick="ajax('/<%= choices[0].toLowerCase() %>')"
+      id="choice<%= i + 1 %>"
+      onclick="ajax('/<%= choices[i].title.toLowerCase() %>')"
     >
-      <%= choices[0] %>
+      <%= choices[i].title %>
     </button>
-    <button
-      class="btn btn-light btn-choice"
-      id="choice2"
-      onclick="ajax('/<%= choices[1].toLowerCase() %>')"
-    >
-      <%= choices[1] %>
-    </button>
+    <% } %>
   </div>
 </div>

@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.js"></script>
 <script>
   const DIR = "readyforbaby/";
 
@@ -41,6 +42,8 @@
   $("#signin").submit(function(e) {
     e.preventDefault();
 
+    if ($(".error").length > 0) return false;
+
     let form = $(this);
     let url = form.attr("action");
     let method = form.attr("method");
@@ -54,6 +57,129 @@
         console.log(data);
         // $("#result").html(data.html.result);
         // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
+      },
+    });
+  });
+
+  // $("#signup").submit(function(e) {
+  //   e.preventDefault();
+
+  //   if($(".error").length > 0)
+  //     return false;
+
+  //   let form = $(this);
+  //   let url = form.attr("action");
+  //   let method = form.attr("method");
+  //   let data = form.serialize();
+
+  //   $.ajax({
+  //     type: method,
+  //     url: url,
+  //     data: data,
+  //     success: function(data) {
+  //       console.log(data);
+  //       // $("#result").html(data.html.result);
+  //       // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
+  //     },
+  //   });
+  // });
+
+  $(function() {
+    $("form[name='signin']").validate({
+      rules: {
+        // firstname: "required",
+        // lastname: "required",
+        email: {
+          required: true,
+          email: true,
+        },
+        password: {
+          required: true,
+          minlength: 8,
+        },
+      },
+
+      messages: {
+        // firstname: "Please enter your firstname",
+        // lastname: "Please enter your lastname",
+        email: "Please enter a valid email address",
+        password: {
+          required: "Please provide a password",
+          minlength: "Your password must be at least 8 characters long",
+        },
+      },
+
+      submitHandler: function(form) {
+        if ($(".error").length > 0) return;
+
+        let url = form.attr("action");
+        let method = form.attr("method");
+        let data = form.serialize();
+
+        $.ajax({
+          type: method,
+          url: url,
+          data: data,
+          success: function(data) {
+            console.log(data);
+            // $("#result").html(data.html.result);
+            // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
+          },
+        });
+      },
+    });
+  });
+
+  $(function() {
+    $("form[name='signup']").validate({
+      rules: {
+        first: "required",
+        first: "required",
+        email: {
+          required: true,
+          email: true,
+        },
+        password: {
+          required: true,
+          minlength: 8,
+        },
+        cpassword: {
+          required: true,
+          equalto: password,
+        },
+      },
+
+      messages: {
+        first: "Please enter your first name",
+        first: "Please enter your last name",
+        email: "Please enter a valid email address",
+        password: {
+          required: "Please provide a password",
+          minlength: "Your password must be at least 8 characters long",
+        },
+        cpassword: {
+          required: "Please confirm your password",
+          equalto: "Passwords do not match",
+        },
+      },
+
+      submitHandler: function(form) {
+        if ($(".error").length > 0) return;
+
+        let url = form.attr("action");
+        let method = form.attr("method");
+        let data = form.serialize();
+
+        $.ajax({
+          type: method,
+          url: url,
+          data: data,
+          success: function(data) {
+            console.log(data);
+            // $("#result").html(data.html.result);
+            // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
+          },
+        });
       },
     });
   });

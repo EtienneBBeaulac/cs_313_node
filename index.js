@@ -1,30 +1,10 @@
 const app = require("express");
 const path = require("path");
-const rfb = require("./readyforbaby")
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-var uristring =
-  process.env.MONGOLAB_URI ||
-  process.env.MONGOHQ_URL ||
-  "mongodb://heroku_6vq3ldh8:7or386dvlcuui1mth13th7lrs1@ds243607.mlab.com:43607/heroku_6vq3ldh8";
-const { check, validationResult, sanitizeBody } = require("express-validator");
+const rfb = require("./readyforbaby");
+const ta = require("./team-activities");
+
+const { check, sanitizeBody } = require("express-validator");
 const PORT = process.env.PORT || 5000;
-
-mongoose.connect(uristring, function(err, res) {
-  if (err) {
-    console.log("ERROR connecting to: " + uristring + ". " + err);
-  } else {
-    console.log("Succeeded connected to: " + uristring);
-  }
-});
-
-let personSchema = new Schema({
-  first: { type: String, trim: true },
-  last: { type: String, trim: true },
-  dob: { type: Date, default: Date.now },
-});
-
-let Person = mongoose.model("Person", personSchema);
 
 const POSTAL = {
   stamped: "Letters (Stamped)",
@@ -34,7 +14,7 @@ const POSTAL = {
 };
 
 app()
-  .use(app.static(path.join(__dirname, "public")))
+  .use('/static', app.static(path.join(__dirname, "public")))
   .use(app.urlencoded({ extended: true }))
   .use(app.json())
   .set("views", path.join(__dirname, "views"))
@@ -44,7 +24,10 @@ app()
   .get("/readyforbaby", rfb.getWelcome)
   .get("/readyforbaby/signin", rfb.getSignin)
   .get("/readyforbaby/signup", rfb.getSignup)
+  .get("/readyforbaby/registry", rfb.getRegistry)
+  .get("/readyforbaby/categories", rfb.getCategories)
   .get("/readyforbaby/checklist", rfb.getChecklist)
+  .post("/readyforbaby/addChecklistItem", rfb.addChecklistItem)
   .get("/readyforbaby/checklist/:choice", rfb.getChoice)
   .get("/readyforbaby/checklist/:choice/:products", rfb.getProducts)
   .post(
@@ -61,19 +44,33 @@ app()
     ],
     rfb.signin
   )
+  .post(
+    "/readyforbaby/signup",
+    [
+      check("email", "Invalid email").isEmail(),
+      check("password", "Invalid password").isLength({ min: 8 }),
+      sanitizeBody("email")
+        .trim()
+        .escape(),
+      sanitizeBody("password")
+        .trim()
+        .escape(),
+    ],
+    rfb.signup
+  )
   /***************************** TEAM ACTIVITIES *****************************/
   ////////// TA 09 //////////
   .get("/team-activities/09", (req, res) =>
     res.render("pages/team-activities/team-09/main")
   )
-  .get("/team-activities/09/math", getMath)
-  .get("/team-activities/09/math_service", sendMath)
+  .get("/team-activities/09/math", ta.getMath)
+  .get("/team-activities/09/math_service", ta.sendMath)
   ////////// TA 10 //////////
   .get("/team-activities/10", (req, res) =>
     res.render("pages/team-activities/team-10/main")
   )
-  .get("/team-activities/10/getPerson", getPerson)
-  .post("/team-activities/10/addPerson", addPerson)
+  .get("/team-activities/10/getPerson", ta.getPerson)
+  .post("/team-activities/10/addPerson", ta.addPerson)
   /******************************* ASSIGNMENTS *******************************/
   //////// PONDER 09 /////////
   .get("/assignments/09", (req, res) =>
@@ -81,50 +78,6 @@ app()
   )
   .get("/assignments/09/get-rates", getRates)
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function getPerson(req, res) {
-  Person.find({ first: req.query.first }).exec(function(err, result) {
-    if (!err) {
-      res.json(result);
-    } else {
-      res.json({ err: "Something bad happened." });
-    }
-  });
-  // res.json({ id: 1, first: "Test", last: "Last", date: new Date() });
-}
-
-function addPerson(req, res) {
-  console.log(req.body);
-  let newPerson = new Person({
-    first: req.body.first,
-    last: req.body.last,
-    dob: new Date(),
-  });
-  newPerson.save(function(err) {
-    if (err) res.json(err);
-    else res.json({ status: "Success!" });
-  });
-}
 
 function getRates(req, res) {
   let query = req.query;
@@ -176,32 +129,4 @@ function getRates(req, res) {
     ],
     {}
   );
-}
-
-function getMath(req, res) {
-  let value = doMath(req.query);
-  res.render("pages/team-activities/team-09/math", { value: value });
-}
-
-function sendMath(req, res) {
-  let value = doMath(req.query);
-  res.json({ result: value });
-}
-
-function doMath(query) {
-  let operand = query.operand;
-  let num1 = parseFloat(query.num1);
-  let num2 = parseFloat(query.num2);
-  let value = 0;
-
-  if (operand === "add") {
-    value = num1 + num2;
-  } else if (operand === "sub") {
-    value = num1 - num2;
-  } else if (operand === "mult") {
-    value = num1 * num2;
-  } else if (operand === "div") {
-    value = num1 / num2;
-  }
-  return value;
 }

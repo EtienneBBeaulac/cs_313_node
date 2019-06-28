@@ -2,15 +2,15 @@
     <div class="row justify-content-center">
       <div class="user-card pb-4">
         <h1>Sign in</h1>
-        <form action="/readyforbaby/signin" method="post" id="signin">
+        <form action="/readyforbaby/signin" method="post" id="signin" name="signin">
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="text" name="email" class="form-control" value="" required autofocus>
+            <input type="email" name="email" id="email" class="form-control" value="" autocomplete="username" required autofocus>
           </div>
           <div class="invalid-feedback mb-3 d-block"></div>
           <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" name="password" class="form-control" value="" required>
+            <input type="password" name="password" id="password" class="form-control" value="" autocomplete="current-password" required>
             <div class="btn text small pointer" onclick="ajax('/reset-pw', '/readyforbaby')">Reset password</div>
           </div>
           <div class="invalid-feedback mb-3 d-block"></div>

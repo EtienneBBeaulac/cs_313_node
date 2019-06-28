@@ -1,0 +1,40 @@
+<!-- <div class="text-center"> -->
+  <h2 class="mb-5 text-center" id="page-title">Registry</h2>
+
+  <ul class="list-group">
+    <li class="list-group-item d-flex align-items-center">
+      <div class="col-md-2">
+        <img
+          src="https://target.scene7.com/is/image/Target/GUEST_867a07aa-aa1f-469b-972a-b95e5b8a0ecc?wid=488&hei=488&fmt=pjpeg"
+          alt="bottle"
+        />
+      </div>
+      <div class="col">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">List group item heading</h5>
+          <small>3 days ago</small>
+        </div>
+        <p class="mb-1">
+          Donec id elit non mi porta gravida at eget metus. Maecenas sed diam
+          eget risus varius blandit.
+        </p>
+      </div>
+    </li>
+    <% for (let i = 0; i < items.length; i++) { %>
+    <li class="list-group-item d-flex align-items-center">
+      <div class="col-md-2">
+        <img src="<%= items[i].imgLink %>" alt="<%= items[i].title %>" />
+      </div>
+      <div class="col">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1"><%= items[i].title %></h5>
+          <small>items[i].added</small>
+        </div>
+        <p class="mb-1">
+          <%= items[i].description %>
+        </p>
+      </div>
+    </li>
+    <% } %>
+  </ul>
+</div>
