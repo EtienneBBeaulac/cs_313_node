@@ -178,6 +178,24 @@ exports.getCategories = function(req, res) {
   );
 };
 
+exports.getCategory = function(req, res) {
+  sendJsonWithHtml(
+    req,
+    res,
+    [
+      {
+        type: "main",
+        name: PROJECT_PARTIALS + "/products.ejs",
+        renderData: renderData,
+      },
+      { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
+    ],
+    {
+      url: "/readyforbaby/categories/" + req.params["category"],
+    }
+  );
+};
+
 /**
  * getChecklist
  * Callback function for displaying the checklist page
@@ -219,6 +237,7 @@ exports.addChecklistItem = function(req, res) {
 
   db.ChecklistItem.find({ title: req.body.title }, (err, data) => {
     if (!data || data.length === 0) {
+      if (!req.body.choices) req.body.choice = [];
       let checklistItem = db.ChecklistItem({
         title: req.body.title,
         subtitle: req.body.subtitle,
@@ -236,12 +255,15 @@ exports.addChecklistItem = function(req, res) {
  * getChoice
  * Callback function for displaying the choice page
  */
-exports.getChoice = function getChoice(req, res) {
+exports.getChecklistItem = function(req, res) {
   // let renderData = getRenderDataFor(req.params["choice"]);
-  db.ChecklistItem.find(
-    { title: uppercase(req.params["choice"]) },
-    (err, data) => {
-      if (!data || data.length === 0) return;
+  db.ChecklistItem.findOne({ title: uppercase(req.params["checklistItem"]) })
+    .populate({ path: "choices", model: "Choice" })
+    .exec((err, data) => {
+      console.log(data)
+      if (!data) return;
+      for (let i = 0; i < data.choices.length; i++) 
+        data.choices[i].title = uppercase(data.choices[i].title);
       sendJsonWithHtml(
         req,
         res,
@@ -249,38 +271,217 @@ exports.getChoice = function getChoice(req, res) {
           {
             type: "main",
             name: PROJECT_PARTIALS + "/choice.ejs",
-            renderData: data[0],
+            renderData: data,
           },
           { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
         ],
         {
-          url: "/readyforbaby/checklist/" + req.params.choice,
+          url: "/readyforbaby/checklist/" + req.params.checklistItem,
         }
       );
-    }
-  );
+    });
 };
 
-exports.getProducts = function getProducts(req, res) {
-  sendJsonWithHtml(
-    req,
-    res,
-    [
-      {
-        type: "main",
-        name: PROJECT_PARTIALS + "/products.ejs",
-        // renderData: renderData,
-      },
-      { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
-    ],
-    {
-      url:
-        "/readyforbaby/checklist/" +
-        req.params["choice"] +
-        "/" +
-        req.params["products"],
+exports.addChoicesToChecklistItem = function (req, res) {
+  if (!req.body.title || req.body.title === "") {
+    res.status(400).send({ message: "Can't add choices to checklist item" });
+    return;
+  }
+  db.ChecklistItem.findOne({ title: req.body.title }, (err, data) => {
+    data.choices.push(...req.body.choices);
+    data.save(err => {
+      if (err) return res.send(err);
+      res.json({ status: "done" });
+    });
+  });
+}
+
+exports.getProductCategory = function(req, res) {
+  db.ProductCategory.findOne({ title: req.query.title })
+    .populate({ path: "products", model: "Product" })
+    .exec((err, data) => {
+      if (!err) res.json(data);
+    });
+};
+
+exports.getAllProductCategories = function(req, res) {
+  db.ProductCategory.find({})
+    .populate({ path: "products", model: "Product" })
+    .exec((err, data) => {
+      if (!err) res.json(data);
+    });
+};
+
+exports.addProductCategory = function(req, res) {
+  if (!req.body.title || req.body.title === "") {
+    res.status(400).send({ message: "Can't add product category item" });
+    return;
+  }
+
+  db.ProductCategory.find({ title: req.body.title }, (err, data) => {
+    if (!data || data.length === 0) {
+      if (!req.body.products) req.body.product = [];
+      let productCategory = db.ProductCategory({
+        title: req.body.title,
+        description: req.body.description,
+        products: req.body.products,
+      });
+      productCategory.save(err => {
+        if (err) res.json(err);
+        else res.json({ status: "Success!" });
+      });
     }
-  );
+  });
+};
+
+exports.addProductsToProductCategory = function(req, res) {
+  if (!req.body.title || req.body.title === "") {
+    res.status(400).send({ message: "Can't add product category item" });
+    return;
+  }
+  db.ProductCategory.findOne({ title: req.body.title }, (err, data) => {
+    data.products.push(...req.body.products);
+    data.save(err => {
+      if (err) return res.send(err);
+      res.json({ status: "done" });
+    });
+  });
+};
+
+exports.addChoiceCategory = function(req, res) {
+  if (!req.body.title || req.body.title === "") {
+    res.status(400).send({ message: "Can't add product category item" });
+    return;
+  }
+
+  db.Choice.find({ title: req.body.title }, (err, data) => {
+    if (!data || data.length === 0) {
+      if (!req.body.productCategories) req.body.productCategories = [];
+      let choice = db.Choice({
+        title: req.body.title,
+        description: req.body.description,
+        linkText: req.body.linkText,
+        linkUrl: req.body.linkUrl,
+        productCategories: req.body.productCategories,
+      });
+      choice.save(err => {
+        if (err) res.json(err);
+        else res.json({ status: "Success!" });
+      });
+    }
+  });
+};
+
+exports.addProductCategoriesToChoice = function(req, res) {
+  if (!req.body.title || req.body.title === "") {
+    res.status(400).send({ message: "Can't add to choice" });
+    return;
+  }
+
+  db.Choice.findOne({ title: req.body.title }, (err, data) => {
+    data.productCategories.push(...req.body.productCategories);
+    data.save(err => {
+      if (err) return res.send(err);
+      res.json({ status: "done" });
+    });
+  });
+};
+
+exports.getChoiceCategories = function(req, res) {
+  // console.log(req.params);
+  db.Choice.findOne({ title: req.params.choice.toLowerCase() })
+    .populate({
+      path: "productCategories",
+      model: "ProductCategory",
+      populate: { path: "products", model: "Product" },
+    })
+    .exec((err, data) => {
+      if (!err) {
+        data.title = uppercase(data.title);
+        for (let i = 0; i < data.productCategories.length; i++)
+          data.productCategories[i].title = uppercase(data.productCategories[i].title);
+        sendJsonWithHtml(
+          req,
+          res,
+          [
+            {
+              type: "main",
+              name: PROJECT_PARTIALS + "/products.ejs",
+              renderData: data,
+            },
+            { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
+          ],
+          {
+            url: "/readyforbaby/checklist/" + req.params.checklistItem + "/" + req.params.choice,
+          }
+        );
+      } else {
+        console.log(err)
+        res.json(err);
+      }
+    });
+};
+
+exports.getAllChoiceCategories = function(req, res) {
+  db.Choice.find({}, (err, data) => {
+    if (!err) res.json(data);
+  });
+};
+
+// exports.getProducts = function getProducts(req, res) {
+//   sendJsonWithHtml(
+//     req,
+//     res,
+//     [
+//       {
+//         type: "main",
+//         name: PROJECT_PARTIALS + "/products.ejs",
+//         // renderData: renderData,
+//       },
+//       { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
+//     ],
+//     {
+//       url:
+//         "/readyforbaby/checklist/" +
+//         req.params["choice"] +
+//         "/" +
+//         req.params["products"],
+//     }
+//   );
+// };
+
+exports.getAllProducts = function(req, res) {
+  db.Product.find({}, (err, data) => {
+    if (!err) res.json(data);
+  });
+};
+
+exports.addProduct = function(req, res) {
+  if (
+    !req.body.title ||
+    req.body.title === "" ||
+    !req.body.link ||
+    req.body.link === "" ||
+    !req.body.imageLink ||
+    req.body.imageLink === ""
+  ) {
+    res.status(400).send({ message: "Can't add product" });
+    return;
+  }
+
+  db.Product.find({ title: req.body.title }, (err, data) => {
+    if (!data || data.length === 0) {
+      let product = db.Product({
+        title: req.body.title,
+        link: req.body.link,
+        imageLink: req.body.imageLink,
+      });
+      product.save(err => {
+        if (err) res.json(err);
+        else res.json({ status: "Success!" });
+      });
+    }
+  });
 };
 
 /**

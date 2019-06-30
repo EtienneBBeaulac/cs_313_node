@@ -2,7 +2,7 @@
   <h2 class="mb-5" id="page-title"><%= title %></h2>
   <h4 class="mb-4" id="page-subtitle"><%= subtitle %></h4>
 
-  <div class="btn-group" role="group">
+  <div class="btn-group mb-4 mt-5" role="group">
       <% for (let i = 0; i < choices.length; i++) { %>
     <button
       class="btn btn-light btn-choice"
@@ -12,5 +12,12 @@
       <%= choices[i].title %>
     </button>
     <% } %>
+  </div>
+  <div class="row justify-content-center">
+  <% for (let i = 0; i < choices.length; i++) { %>
+    <div class="col-md-3">
+      <%= choices[i].description %>
+    </div>
+  <% } %>
   </div>
 </div>

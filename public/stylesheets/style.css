@@ -143,7 +143,7 @@ body {
 }
 
 .product-box {
-  height: 250px;
+  min-height: 275px;
   background-color: white;
   border: 1px solid #707070;
   display: inline-flex;
@@ -163,14 +163,13 @@ body {
   padding: 16px 0px;
 }
 
-.product-links div {
+.product-links div, .product-links a {
   cursor: pointer;
   font-weight: bold;
   font-size: 12px;
   padding-top: 0px !important;
   padding-bottom: 0px !important;
 }
-
 
 img {
   max-width: 100%;
