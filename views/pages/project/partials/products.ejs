@@ -2,29 +2,33 @@
   <h2 id="page-title"><%= title %></h2>
 </div>
 <% for (let i = 0; i < productCategories.length; i++) { %>
-<div class="row mb-4 mb-5">
+<div class="row mb-5">
   <div class="col-md-12 mb-3">
     <h3 class="product-cat"><%= productCategories[i].title %></h3>
+    <span class="badge badge-danger">must-have</span>
     <h6>(<%= productCategories[i].description %>)</h6>
-    <!-- <span class="badge badge-danger"><badge %></span> -->
   </div>
-
-  <% for (let j = 0; j < productCategories[i].products.length; j++) { %>
-    <div class="col-md-2 mr-5 ml-1 mb-5 row product-box text-center">
-      <div class="product-info col-xs-12">
-        <img
-          src="<%= productCategories[i].products[j].imageLink %>"
-          alt="<%= productCategories[i].products[j].title.toLowerCase() %>"
-        />
-        <div class=""><%= productCategories[i].products[j].title %></div>
-      </div>
-      <div class="product-links col-xs-12">
-        <a class="btn" href="<%= productCategories[i].products[j].link %>"
-          >Go to Store</a
-        >
-        <div class="btn">Add to Registry</div>
-      </div>
-    </div>
-<% } %>
 </div>
-<% } %>
+
+<% for (let j = 0; j < productCategories[i].products.length; j++) { %> <% if (j
+% 3 === 0) { %>
+<div class="row">
+  <% } %>
+  <div class="col-md-2 mr-5 ml-1 mb-5 row product-box text-center">
+    <div class="product-info col-xs-12">
+      <img
+        src="<%= productCategories[i].products[j].imageLink %>"
+        alt="<%= productCategories[i].products[j].title.toLowerCase() %>"
+      />
+      <div class=""><%= productCategories[i].products[j].title %></div>
+    </div>
+    <div class="product-links col-xs-12">
+      <a class="btn" href="<%= productCategories[i].products[j].link %>"
+        >Go to Store</a
+      >
+      <div class="btn">Add to Registry</div>
+    </div>
+  </div>
+  <% if (j % 3 === 2) { %>
+</div>
+<% } %> <% } %> <% } %>

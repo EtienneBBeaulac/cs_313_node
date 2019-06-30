@@ -227,9 +227,7 @@ exports.addChecklistItem = function(req, res) {
     !req.body.subtitle ||
     req.body.subtitle === "" ||
     !req.body.choices ||
-    req.body.choices.length === 0 ||
-    !req.body.choices[0].title ||
-    !req.body.choices[0].description
+    req.body.choices.length === 0
   ) {
     res.status(400).send({ message: "Can't add checklist item" });
     return;
@@ -262,6 +260,7 @@ exports.getChecklistItem = function(req, res) {
     .exec((err, data) => {
       console.log(data)
       if (!data) return;
+      if (err) console.log(err);
       for (let i = 0; i < data.choices.length; i++) 
         data.choices[i].title = uppercase(data.choices[i].title);
       sendJsonWithHtml(
