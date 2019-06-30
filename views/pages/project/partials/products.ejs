@@ -6,7 +6,9 @@
   <div class="col-md-12 mb-3">
     <h3 class="product-cat"><%= productCategories[i].title %></h3>
     <span class="badge badge-danger">must-have</span>
+    <% if (productCategories[i].description && productCategories[i].description !== "") { %>
     <h6>(<%= productCategories[i].description %>)</h6>
+    <% } %>
   </div>
 </div>
 
