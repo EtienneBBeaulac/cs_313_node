@@ -162,38 +162,80 @@ exports.getRegistry = function(req, res) {
 };
 
 exports.getCategories = function(req, res) {
-  sendJsonWithHtml(
-    req,
-    res,
-    [
+  db.Category.find({}, "title link image", (err, data) => {
+    if (err) res.json(err);
+    for (let i = 0; i < data.length; i++)
+      data[i].title = uppercase(data[i].title);
+    sendJsonWithHtml(
+      req,
+      res,
+      [
+        {
+          type: "main",
+          name: PROJECT_PARTIALS + "/categories.ejs",
+          renderData: { categories: data },
+        },
+        { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
+      ],
       {
-        type: "main",
-        name: PROJECT_PARTIALS + "/categories.ejs",
-      },
-      { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
-    ],
-    {
-      url: "/readyforbaby/categories",
-    }
-  );
+        url: "/readyforbaby/categories",
+      }
+    );
+  });
 };
 
 exports.getCategory = function(req, res) {
-  sendJsonWithHtml(
-    req,
-    res,
-    [
-      {
-        type: "main",
-        name: PROJECT_PARTIALS + "/products.ejs",
-        renderData: renderData,
-      },
-      { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
-    ],
-    {
-      url: "/readyforbaby/categories/" + req.params["category"],
-    }
-  );
+  db.Category.findOne({ link: req.params.category })
+    .populate({
+      path: "productCategories",
+      model: "ProductCategory",
+      populate: { path: "products", model: "Product" },
+    })
+    .exec((err, data) => {
+      data.title = uppercase(data.title);
+      for (let i = 0; i < data.productCategories.length; i++)
+        data.productCategories[i].title = uppercase(data.productCategories[i].title);
+      sendJsonWithHtml(
+        req,
+        res,
+        [
+          {
+            type: "main",
+            name: PROJECT_PARTIALS + "/products.ejs",
+            renderData: data,
+          },
+          { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
+        ],
+        {
+          url: "/readyforbaby/categories/" + req.params["category"],
+        }
+      );
+    });
+};
+
+exports.getAllCategories = function(req, res) {
+  db.Category.find({}, (err, data) => {
+    if (!err) res.json(data);
+    else res.json(err);
+  });
+};
+
+exports.addCategories = function(req, res) {
+  let categories = [];
+  for (let i = 0; i < req.body.categories.length; i++) {
+    if (!req.body.categories[i]) req.body.categories[i] = [];
+    let category = db.Category({
+      title: req.body.categories[i].title,
+      link: req.body.categories[i].link,
+      image: req.body.categories[i].image,
+      productCategories: req.body.categories[i].productCategories,
+    });
+    categories.push(category);
+  }
+  db.Category.collection.insert(categories, err => {
+    if (err) res.json(err);
+    else res.json({ status: "Success!" });
+  });
 };
 
 /**
@@ -201,7 +243,8 @@ exports.getCategory = function(req, res) {
  * Callback function for displaying the checklist page
  */
 exports.getChecklist = function getChecklist(req, res) {
-  db.ChecklistItem.find({}, "title", (err, data) => {
+  db.ChecklistItem.find({}, "title skip", (err, data) => {
+    console.log(data[4]);
     sendJsonWithHtml(
       req,
       res,
@@ -224,8 +267,6 @@ exports.addChecklistItem = function(req, res) {
   if (
     !req.body.title ||
     req.body.title === "" ||
-    !req.body.subtitle ||
-    req.body.subtitle === "" ||
     !req.body.choices ||
     req.body.choices.length === 0
   ) {
@@ -239,6 +280,7 @@ exports.addChecklistItem = function(req, res) {
       let checklistItem = db.ChecklistItem({
         title: req.body.title,
         subtitle: req.body.subtitle,
+        skip: req.body.skip,
         choices: req.body.choices,
       });
       checklistItem.save(err => {
@@ -258,10 +300,10 @@ exports.getChecklistItem = function(req, res) {
   db.ChecklistItem.findOne({ title: uppercase(req.params["checklistItem"]) })
     .populate({ path: "choices", model: "Choice" })
     .exec((err, data) => {
-      console.log(data)
+      console.log(data);
       if (!data) return;
       if (err) console.log(err);
-      for (let i = 0; i < data.choices.length; i++) 
+      for (let i = 0; i < data.choices.length; i++)
         data.choices[i].title = uppercase(data.choices[i].title);
       sendJsonWithHtml(
         req,
@@ -281,7 +323,7 @@ exports.getChecklistItem = function(req, res) {
     });
 };
 
-exports.addChoicesToChecklistItem = function (req, res) {
+exports.addChoicesToChecklistItem = function(req, res) {
   if (!req.body.title || req.body.title === "") {
     res.status(400).send({ message: "Can't add choices to checklist item" });
     return;
@@ -293,7 +335,7 @@ exports.addChoicesToChecklistItem = function (req, res) {
       res.json({ status: "done" });
     });
   });
-}
+};
 
 exports.getProductCategory = function(req, res) {
   db.ProductCategory.findOne({ title: req.query.title })
@@ -398,7 +440,9 @@ exports.getChoiceCategories = function(req, res) {
       if (!err) {
         data.title = uppercase(data.title);
         for (let i = 0; i < data.productCategories.length; i++)
-          data.productCategories[i].title = uppercase(data.productCategories[i].title);
+          data.productCategories[i].title = uppercase(
+            data.productCategories[i].title
+          );
         sendJsonWithHtml(
           req,
           res,
@@ -411,11 +455,15 @@ exports.getChoiceCategories = function(req, res) {
             { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
           ],
           {
-            url: "/readyforbaby/checklist/" + req.params.checklistItem + "/" + req.params.choice,
+            url:
+              "/readyforbaby/checklist/" +
+              req.params.checklistItem +
+              "/" +
+              req.params.choice,
           }
         );
       } else {
-        console.log(err)
+        console.log(err);
         res.json(err);
       }
     });

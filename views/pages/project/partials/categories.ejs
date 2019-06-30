@@ -1,9 +1,11 @@
 <div class="row justify-content-center mt-5">
-  <figure class="category" onclick="ajax('/strollers')">
-    <img class="cat-img" src="/static/strollers.png" alt="strollers" />
-    <figcaption>Strollers</figcaption>
+  <% for (let i = 0; i < categories.length; i++) { %>
+  <figure class="category" onclick="ajax('/<%= categories[i].link %>')">
+    <img class="cat-img" src="/static/<%= categories[i].image %>.png" alt="<%= categories[i].image %>" />
+    <figcaption><%= categories[i].title %></figcaption>
   </figure>
-  <figure class="category" onclick="ajax('/car-seats')">
+  <% } %>
+  <!-- <figure class="category" onclick="ajax('/car-seats')">
     <img class="cat-img" src="/static/carseats.png" alt="car seats" />
     <figcaption>Car Seats</figcaption>
   </figure>
@@ -50,5 +52,5 @@
   <figure class="category" onclick="ajax('/gifts-more')">
     <img class="cat-img" src="/static/giftsmore.png" alt="gifts & more" />
     <figcaption>Gifts & More</figcaption>
-  </figure>
+  </figure> -->
 </div>

@@ -35,6 +35,7 @@ let User = mongoose.model("User", userSchema);
 let checklistItemSchema = new Schema({
   title: { type: String, trim: true, require: true },
   subtitle: { type: String, trim: true, require: true },
+  skip: { type: Boolean },
   choices: [ { type: Schema.Types.ObjectId, ref: "Choice" } ],
 });
 
@@ -50,13 +51,13 @@ let choiceSchema = new Schema({
 
 let Choice = mongoose.model("Choice", choiceSchema);
 
-let productCategory = new Schema({
+let productCategorySchema = new Schema({
   title: { type: String, trim: true, require: true },
   description: { type: String, trim: true, require: true },
   products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
 });
 
-let ProductCategory = mongoose.model("ProductCategory", productCategory);
+let ProductCategory = mongoose.model("ProductCategory", productCategorySchema);
 
 let productSchema = new Schema({
   title: { type: String, trim: true, require: true },
@@ -66,6 +67,15 @@ let productSchema = new Schema({
 
 let Product = mongoose.model("Product", productSchema);
 
+let categorySchema = new Schema({
+  title: { type: String, trim: true, require: true },
+  link: { type: String, trim: true, require: true },
+  image: { type: String, trim: true, require: true },
+  productCategories: [{ type: Schema.Types.ObjectId, ref: "ProductCategory" }]
+})
+
+let Category = mongoose.model("Category", categorySchema)
+
 module.exports = {
   Person,
   User,
@@ -73,4 +83,5 @@ module.exports = {
   Choice,
   ProductCategory,
   Product,
+  Category
 };

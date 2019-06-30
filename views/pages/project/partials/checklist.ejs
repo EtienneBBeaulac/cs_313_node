@@ -1,11 +1,10 @@
 <h2 class="mb-5">Checklist</h2>
 <div class="row">
   <% for (let i = 0; i < checklistItems.length; i++) { %>
-    <% if (i % 4 === 0) { %>
-</div>
+    <% if (i % 3 === 0) { %>
   <div class="col-md-4">
     <% } %>
-    <div class="col-xs-12 cl-item" onclick="ajax('/<%= checklistItems[i].title.toLowerCase() %>')">
+    <div class="col-xs-12 cl-item" onclick="ajax('/<%= checklistItems[i].title.toLowerCase() %><% if (checklistItems[i].skip) { %>/<%= checklistItems[i].title.toLowerCase() %><% } %>')">
       <div class="row align-items-center mb-3">
         <div class="col-auto">
           <span class="cl-circle"><%= i + 1 %></span>
@@ -15,6 +14,9 @@
         </div>
       </div>
     </div> 
+    <% if (i % 3 === 2) { %>
+    </div>
+    <% } %>
     <% } %>
     <!-- <div class="col-xs-12 cl-item" onclick="ajax('/sleeping')">
       <div class="row align-items-center mb-3">
