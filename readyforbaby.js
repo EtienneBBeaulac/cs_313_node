@@ -119,19 +119,63 @@ exports.signup = function signup(req, res) {
 
 exports.getRegistry = function(req, res) {
   if (req.session.user && req.cookies.user_sid) {
-    sendJsonWithHtml(
-      req,
-      res,
-      [
-        {
-          type: "main",
-          name: PROJECT_PARTIALS + "/registry.ejs",
-          // renderData: { title: res.title },
-        },
-        getNavbar(req),
-      ],
-      {
-        url: "/readyforbaby/registry",
+    db.Registry.findOne({ email: req.session.user.email })
+      .populate({ path: "products", model: "Product" })
+      .exec((err, data) => {
+        console.log("data: ");
+        console.log(data);
+        if (err) res.send(err);
+        if (!data) {
+          data = { email: req.session.user.email, products: [] };
+        }
+        // for (let i = 0; i < data.products.length; i++) {
+        //   data.products[i].title = uppercase(data.products[i].title);
+        // }
+        console.log(data);
+        sendJsonWithHtml(
+          req,
+          res,
+          [
+            {
+              type: "main",
+              name: PROJECT_PARTIALS + "/registry.ejs",
+              renderData: { data },
+            },
+            getNavbar(req),
+          ],
+          {
+            url: "/readyforbaby/registry",
+          }
+        );
+      });
+  } else {
+    redirectSignin(req, res);
+    // console.log("somethin weird is happening")
+  }
+};
+
+exports.addToRegistry = function(req, res) {
+  console.log(req.body);
+  if (req.session.user && req.cookies.user_sid) {
+    db.Product.findOne({ title: req.body.product.title }).exec(
+      (err, product) => {
+        db.Registry.findOne({ email: req.session.user.email })
+          .populate({ path: "products", model: "Product" })
+          .exec((err, registry) => {
+            if (err) res.send(err);
+            if (!registry) {
+              registry = db.Registry({
+                email: req.session.user.email,
+                products: [product._id],
+              });
+            } else {
+              registry.products.push(product._id);
+            }
+            registry.save(err => {
+              if (err) res.json(err);
+              else res.json({ status: "Success!" });
+            });
+          });
       }
     );
   } else {
@@ -542,17 +586,8 @@ function sendJsonWithHtml(req, res, files, data) {
   }
 }
 
-// /**
-//  * getRenderDataFor
-//  * Gets the data choice to render to ejs
-//  */
-// function getRenderDataFor(choice) {
-//   for (let i = 0; i < CHECKLIST_ITEMS.length; i++)
-//     if (CHECKLIST_ITEMS[i].title.toLowerCase() === choice)
-//       return CHECKLIST_ITEMS[i];
-// }
-
 function redirectSignin(req, res) {
+  console.log("redirected to sign in");
   sendJsonWithHtml(
     req,
     res,

@@ -36,7 +36,7 @@ let checklistItemSchema = new Schema({
   title: { type: String, trim: true, require: true },
   subtitle: { type: String, trim: true, require: true },
   skip: { type: Boolean },
-  choices: [ { type: Schema.Types.ObjectId, ref: "Choice" } ],
+  choices: [{ type: Schema.Types.ObjectId, ref: "Choice" }],
 });
 
 let ChecklistItem = mongoose.model("ChecklistItem", checklistItemSchema);
@@ -71,10 +71,17 @@ let categorySchema = new Schema({
   title: { type: String, trim: true, require: true },
   link: { type: String, trim: true, require: true },
   image: { type: String, trim: true, require: true },
-  productCategories: [{ type: Schema.Types.ObjectId, ref: "ProductCategory" }]
-})
+  productCategories: [{ type: Schema.Types.ObjectId, ref: "ProductCategory" }],
+});
 
-let Category = mongoose.model("Category", categorySchema)
+let Category = mongoose.model("Category", categorySchema);
+
+let registrySchema = new Schema({
+  email: { type: String, trim: true, require: true },
+  products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+});
+
+let Registry = mongoose.model("Registry", registrySchema);
 
 module.exports = {
   Person,
@@ -83,5 +90,6 @@ module.exports = {
   Choice,
   ProductCategory,
   Product,
-  Category
+  Category,
+  Registry,
 };

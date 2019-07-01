@@ -3,8 +3,6 @@
 <script>
   const DIR = "readyforbaby/";
 
-  // $('document').ready(getPage);
-
   addEventListener("popstate", function(e) {
     ajax(window.location.pathname, "", undefined, false);
     e.preventDefault();
@@ -35,65 +33,33 @@
     });
   }
 
+  function addToRegistry(title) {
+    sendAjaxWith(
+      "POST",
+      "/readyforbaby/addToRegistry?r=0",
+      { product: { title: title } },
+      function(result) {
+        if (!result.message) {
+          pageCallback(result);
+        } else {
+          console.log(result);
+        }
+      }
+    );
+  }
+
   function getPage() {
     console.log(window.location);
     ajax();
   }
 
-  // $("#signin").submit(function(e) {
-  //   e.preventDefault();
-
-  //   if ($(".error").length > 0) return false;
-
-  //   let form = $(this);
-  //   let url = form.attr("action");
-  //   let method = form.attr("method");
-  //   let data = form.serialize();
-
-  //   $.ajax({
-  //     type: method,
-  //     url: url,
-  //     data: data,
-  //     success: function(data) {
-  //       console.log(data);
-  //       // $("#result").html(data.html.result);
-  //       // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
-  //     },
-  //   });
-  // });
-
   $("form").submit(e => {
     e.preventDefault();
   });
 
-  // $("#signup").submit(function(e) {
-  //   e.preventDefault();
-
-  //   if($(".error").length > 0)
-  //     return false;
-
-  //   let form = $(this);
-  //   let url = form.attr("action");
-  //   let method = form.attr("method");
-  //   let data = form.serialize();
-
-  //   $.ajax({
-  //     type: method,
-  //     url: url,
-  //     data: data,
-  //     success: function(data) {
-  //       console.log(data);
-  //       // $("#result").html(data.html.result);
-  //       // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
-  //     },
-  //   });
-  // });
-
   $(function() {
     $("form[name='signin']").validate({
       rules: {
-        // firstname: "required",
-        // lastname: "required",
         email: {
           required: true,
           email: true,
@@ -105,8 +71,6 @@
       },
 
       messages: {
-        // firstname: "Please enter your firstname",
-        // lastname: "Please enter your lastname",
         email: "Please enter a valid email address",
         password: {
           required: "Please provide a password",
@@ -122,35 +86,10 @@
         let method = form.attr("method");
         let data = form.serialize();
 
-        sendAjaxWith(method, url, data, signinCallback);
-        // $.ajax({
-        //   type: method,
-        //   url: url,
-        //   data: data,
-        //   success: function(data) {
-        //     console.log(data);
-        //     // $("#result").html(data.html.result);
-        //     // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
-        //   },
-        // });
+        sendAjaxWith(method, url, data, pageCallback);
       },
     });
   });
-
-  function signinCallback(data) {
-    if (!data.html) {
-      return;
-    }
-    if (data.html.navbar) {
-      $("#navbar").html(data.html.navbar);
-    }
-    if (data.html.main) {
-      $("#main-page").html(data.html.main);
-      if (pushState) window.history.pushState("", "", data.data.url);
-    }
-    $("html").show();
-    console.log(window.location);
-  }
 
   $(function() {
     $("form[name='signup']").validate({
@@ -192,12 +131,12 @@
         let method = form.attr("method");
         let data = form.serialize();
 
-        // sendAjaxWith(method, url, data, signupCallback);
+        sendAjaxWith(method, url, data, pageCallback);
       },
     });
   });
 
-  function signupCallback(data) {
+  function pageCallback(data, pushState=true) {
     if (!data.html) {
       return;
     }
@@ -217,7 +156,7 @@
       type: method,
       url: url,
       data: data,
-      success: callback
+      success: callback,
     });
   }
 </script>
