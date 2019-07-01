@@ -137,7 +137,9 @@
   });
 
   function pageCallback(data, pushState=true) {
+    console.log(data)
     if (!data.html) {
+      $('#err').html(data.err);
       return;
     }
     if (data.html.navbar) {

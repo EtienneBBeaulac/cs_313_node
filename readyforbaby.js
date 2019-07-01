@@ -35,8 +35,10 @@ exports.getSignin = function(req, res) {
   }
 };
 
-exports.signin = function(req, res) {
+function signin(req, res, email="", pw="") {
   console.log(req.body);
+  if (email === "") email = req.body.email;
+  if (pw === "") pw = req.body.pw;
   db.User.findOne({ email: req.body.email }).exec(function(err, result) {
     console.log(result);
     if (!err && result) {
@@ -45,16 +47,17 @@ exports.signin = function(req, res) {
         if (user) {
           req.session.user = result;
           res.redirect("/readyforbaby/registry");
-        } else res.status(400).send({ message: "Invalid login" });
+        } else sendError(res, "Invalid login");
       });
     } else {
-      console.log(err);
-      // res.json({ err: "Something bad happened." });
+      sendError(res, "Invalid login");
     }
-  });
+  }); 
 };
 
-exports.getSignup = function getSignup(req, res) {
+exports.signin = signin;
+
+exports.getSignup = function(req, res) {
   if (!req.session.user || !req.cookies.user_sid) {
     sendJsonWithHtml(
       req,
@@ -70,7 +73,7 @@ exports.getSignup = function getSignup(req, res) {
   }
 };
 
-exports.signup = function signup(req, res) {
+exports.signup = function(req, res) {
   console.log(req.body);
   let first = req.body.first;
   let last = req.body.last;
@@ -103,16 +106,17 @@ exports.signup = function signup(req, res) {
             password: pw,
           });
           newUser.save(function(err) {
-            if (err) res.json(err);
-            else res.json({ status: "Success!" });
+            if (err) sendError(res, err);
+            else {
+              signin(req, res, email, password);
+            }
           });
         });
       } else {
-        res.status(400).send({ message: "Email already exists." });
+        sendError(res, "Email already exists.");
       }
     } else {
-      console.log(err);
-      // res.json({ err: "Something bad happened." });
+      sendError(res, "Unable to create account");
     }
   });
 };
@@ -122,16 +126,10 @@ exports.getRegistry = function(req, res) {
     db.Registry.findOne({ email: req.session.user.email })
       .populate({ path: "products", model: "Product" })
       .exec((err, data) => {
-        console.log("data: ");
-        console.log(data);
         if (err) res.send(err);
         if (!data) {
           data = { email: req.session.user.email, products: [] };
         }
-        // for (let i = 0; i < data.products.length; i++) {
-        //   data.products[i].title = uppercase(data.products[i].title);
-        // }
-        console.log(data);
         sendJsonWithHtml(
           req,
           res,
@@ -150,7 +148,6 @@ exports.getRegistry = function(req, res) {
       });
   } else {
     redirectSignin(req, res);
-    // console.log("somethin weird is happening")
   }
 };
 
@@ -180,7 +177,6 @@ exports.addToRegistry = function(req, res) {
     );
   } else {
     redirectSignin(req, res);
-    // console.log("somethin weird is happening")
   }
 };
 
@@ -243,7 +239,7 @@ exports.getCategory = function(req, res) {
 exports.getAllCategories = function(req, res) {
   db.Category.find({}, (err, data) => {
     if (!err) res.json(data);
-    else res.json(err);
+    else sendError(res, err);
   });
 };
 
@@ -645,4 +641,8 @@ function getNavbar(req) {
     name: PROJECT_PARTIALS + "/normal-navbar.ejs",
     renderData: { data: data },
   };
+}
+
+function sendError(res, error) {
+  res.json({ err: error });
 }
