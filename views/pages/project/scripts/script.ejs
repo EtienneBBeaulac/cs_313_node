@@ -1,4 +1,5 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.js"></script>
+<script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
 <script>
   const DIR = "readyforbaby/";
 
@@ -39,26 +40,30 @@
     ajax();
   }
 
-  $("#signin").submit(function(e) {
+  // $("#signin").submit(function(e) {
+  //   e.preventDefault();
+
+  //   if ($(".error").length > 0) return false;
+
+  //   let form = $(this);
+  //   let url = form.attr("action");
+  //   let method = form.attr("method");
+  //   let data = form.serialize();
+
+  //   $.ajax({
+  //     type: method,
+  //     url: url,
+  //     data: data,
+  //     success: function(data) {
+  //       console.log(data);
+  //       // $("#result").html(data.html.result);
+  //       // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
+  //     },
+  //   });
+  // });
+
+  $("form").submit(e => {
     e.preventDefault();
-
-    if ($(".error").length > 0) return false;
-
-    let form = $(this);
-    let url = form.attr("action");
-    let method = form.attr("method");
-    let data = form.serialize();
-
-    $.ajax({
-      type: method,
-      url: url,
-      data: data,
-      success: function(data) {
-        console.log(data);
-        // $("#result").html(data.html.result);
-        // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
-      },
-    });
   });
 
   // $("#signup").submit(function(e) {
@@ -112,23 +117,40 @@
       submitHandler: function(form) {
         if ($(".error").length > 0) return;
 
+        form = $("#signin");
         let url = form.attr("action");
         let method = form.attr("method");
         let data = form.serialize();
 
-        $.ajax({
-          type: method,
-          url: url,
-          data: data,
-          success: function(data) {
-            console.log(data);
-            // $("#result").html(data.html.result);
-            // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
-          },
-        });
+        sendAjaxWith(method, url, data, signinCallback);
+        // $.ajax({
+        //   type: method,
+        //   url: url,
+        //   data: data,
+        //   success: function(data) {
+        //     console.log(data);
+        //     // $("#result").html(data.html.result);
+        //     // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
+        //   },
+        // });
       },
     });
   });
+
+  function signinCallback(data) {
+    if (!data.html) {
+      return;
+    }
+    if (data.html.navbar) {
+      $("#navbar").html(data.html.navbar);
+    }
+    if (data.html.main) {
+      $("#main-page").html(data.html.main);
+      if (pushState) window.history.pushState("", "", data.data.url);
+    }
+    $("html").show();
+    console.log(window.location);
+  }
 
   $(function() {
     $("form[name='signup']").validate({
@@ -145,7 +167,7 @@
         },
         cpassword: {
           required: true,
-          equalto: password,
+          equalTo: "#password",
         },
       },
 
@@ -159,7 +181,7 @@
         },
         cpassword: {
           required: "Please confirm your password",
-          equalto: "Passwords do not match",
+          equalTo: "Passwords do not match",
         },
       },
 
@@ -170,17 +192,32 @@
         let method = form.attr("method");
         let data = form.serialize();
 
-        $.ajax({
-          type: method,
-          url: url,
-          data: data,
-          success: function(data) {
-            console.log(data);
-            // $("#result").html(data.html.result);
-            // $('#result').html('The rate for ' + dataSer[1].value + ' oz of ' + $('#' + dataSer[0].value).html() + ' is ' + data.rate);
-          },
-        });
+        // sendAjaxWith(method, url, data, signupCallback);
       },
     });
   });
+
+  function signupCallback(data) {
+    if (!data.html) {
+      return;
+    }
+    if (data.html.navbar) {
+      $("#navbar").html(data.html.navbar);
+    }
+    if (data.html.main) {
+      $("#main-page").html(data.html.main);
+      if (pushState) window.history.pushState("", "", data.data.url);
+    }
+    $("html").show();
+    console.log(window.location);
+  }
+
+  function sendAjaxWith(method, url, data, callback) {
+    $.ajax({
+      type: method,
+      url: url,
+      data: data,
+      success: callback
+    });
+  }
 </script>

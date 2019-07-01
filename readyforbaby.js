@@ -2,45 +2,10 @@ const fs = require("fs");
 const ejs = require("ejs");
 const path = require("path");
 const bcrypt = require("bcrypt");
-const session = require("express-session");
 const db = require("./db");
 const { validationResult } = require("express-validator");
 const PROJECT_PAGES = "pages/project/pages";
 const PROJECT_PARTIALS = "views/pages/project/partials";
-
-// // TODO: Store in database
-// const CHECKLIST_ITEMS = [
-//   {
-//     title: "Feeding",
-//     subtitle: "Breastmilk or Formula?",
-//     choices: ["Breastmilk", "Formula"],
-//   },
-//   {
-//     title: "Sleeping",
-//     subtitle: "",
-//     choices: ["", ""],
-//   },
-//   {
-//     title: "Diapering",
-//     subtitle: "",
-//     choices: ["", ""],
-//   },
-//   {
-//     title: "Clothing",
-//     subtitle: "",
-//     choices: ["", ""],
-//   },
-//   {
-//     title: "Hygiene",
-//     subtitle: "",
-//     choices: ["", ""],
-//   },
-//   {
-//     title: "Travel",
-//     subtitle: "",
-//     choices: ["", ""],
-//   },
-// ];
 
 exports.getWelcome = function getWelcome(req, res) {
   sendJsonWithHtml(
@@ -54,28 +19,33 @@ exports.getWelcome = function getWelcome(req, res) {
   );
 };
 
-exports.getSignin = function getSignin(req, res) {
-  sendJsonWithHtml(
-    req,
-    res,
-    [
-      { type: "main", name: PROJECT_PARTIALS + "/signin.ejs" },
-      { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
-    ],
-    { url: "/readyforbaby/signin" }
-  );
+exports.getSignin = function(req, res) {
+  if (!req.session.user || !req.cookies.user_sid) {
+    sendJsonWithHtml(
+      req,
+      res,
+      [
+        { type: "main", name: PROJECT_PARTIALS + "/signin.ejs" },
+        getNavbar(req),
+      ],
+      { url: "/readyforbaby/signin" }
+    );
+  } else {
+    res.redirect("/readyforbaby/registry");
+  }
 };
 
-exports.signin = function signIn(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-  }
+exports.signin = function(req, res) {
+  console.log(req.body);
   db.User.findOne({ email: req.body.email }).exec(function(err, result) {
-    if (!err) {
-      console.log(result);
-      comparePassword(req.body.password, result.password, (err, match) => {
-        if (match) res.json({ cookie: "test cookie" });
-        else res.status(400).send({ message: "Invalid login" });
+    console.log(result);
+    if (!err && result) {
+      comparePassword(req.body.password, result.password, (err, user) => {
+        console.log(user);
+        if (user) {
+          req.session.user = result;
+          res.redirect("/readyforbaby/registry");
+        } else res.status(400).send({ message: "Invalid login" });
       });
     } else {
       console.log(err);
@@ -85,15 +55,19 @@ exports.signin = function signIn(req, res) {
 };
 
 exports.getSignup = function getSignup(req, res) {
-  sendJsonWithHtml(
-    req,
-    res,
-    [
-      { type: "main", name: PROJECT_PARTIALS + "/signup.ejs" },
-      { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
-    ],
-    { url: "/readyforbaby/signup" }
-  );
+  if (!req.session.user || !req.cookies.user_sid) {
+    sendJsonWithHtml(
+      req,
+      res,
+      [
+        { type: "main", name: PROJECT_PARTIALS + "/signup.ejs" },
+        getNavbar(req),
+      ],
+      { url: "/readyforbaby/signup" }
+    );
+  } else {
+    res.redirect("/readyforbaby");
+  }
 };
 
 exports.signup = function signup(req, res) {
@@ -144,21 +118,26 @@ exports.signup = function signup(req, res) {
 };
 
 exports.getRegistry = function(req, res) {
-  sendJsonWithHtml(
-    req,
-    res,
-    [
+  if (req.session.user && req.cookies.user_sid) {
+    sendJsonWithHtml(
+      req,
+      res,
+      [
+        {
+          type: "main",
+          name: PROJECT_PARTIALS + "/registry.ejs",
+          // renderData: { title: res.title },
+        },
+        getNavbar(req),
+      ],
       {
-        type: "main",
-        name: PROJECT_PARTIALS + "/registry.ejs",
-        // renderData: { title: res.title },
-      },
-      { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
-    ],
-    {
-      url: "/readyforbaby/registry",
-    }
-  );
+        url: "/readyforbaby/registry",
+      }
+    );
+  } else {
+    redirectSignin(req, res);
+    // console.log("somethin weird is happening")
+  }
 };
 
 exports.getCategories = function(req, res) {
@@ -175,7 +154,7 @@ exports.getCategories = function(req, res) {
           name: PROJECT_PARTIALS + "/categories.ejs",
           renderData: { categories: data },
         },
-        { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
+        getNavbar(req),
       ],
       {
         url: "/readyforbaby/categories",
@@ -192,24 +171,28 @@ exports.getCategory = function(req, res) {
       populate: { path: "products", model: "Product" },
     })
     .exec((err, data) => {
-      data.title = uppercase(data.title);
-      for (let i = 0; i < data.productCategories.length; i++)
-        data.productCategories[i].title = uppercase(data.productCategories[i].title);
-      sendJsonWithHtml(
-        req,
-        res,
-        [
+      if (data) {
+        data.title = uppercase(data.title);
+        for (let i = 0; i < data.productCategories.length; i++)
+          data.productCategories[i].title = uppercase(
+            data.productCategories[i].title
+          );
+        sendJsonWithHtml(
+          req,
+          res,
+          [
+            {
+              type: "main",
+              name: PROJECT_PARTIALS + "/products.ejs",
+              renderData: data,
+            },
+            getNavbar(req),
+          ],
           {
-            type: "main",
-            name: PROJECT_PARTIALS + "/products.ejs",
-            renderData: data,
-          },
-          { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
-        ],
-        {
-          url: "/readyforbaby/categories/" + req.params["category"],
-        }
-      );
+            url: "/readyforbaby/categories/" + req.params["category"],
+          }
+        );
+      }
     });
 };
 
@@ -254,7 +237,7 @@ exports.getChecklist = function getChecklist(req, res) {
           name: PROJECT_PARTIALS + "/checklist.ejs",
           renderData: { checklistItems: data },
         },
-        { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
+        getNavbar(req),
       ],
       {
         url: "/readyforbaby/checklist",
@@ -314,7 +297,7 @@ exports.getChecklistItem = function(req, res) {
             name: PROJECT_PARTIALS + "/choice.ejs",
             renderData: data,
           },
-          { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
+          getNavbar(req),
         ],
         {
           url: "/readyforbaby/checklist/" + req.params.checklistItem,
@@ -452,7 +435,7 @@ exports.getChoiceCategories = function(req, res) {
               name: PROJECT_PARTIALS + "/products.ejs",
               renderData: data,
             },
-            { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
+            getNavbar(req),
           ],
           {
             url:
@@ -485,7 +468,7 @@ exports.getAllChoiceCategories = function(req, res) {
 //         name: PROJECT_PARTIALS + "/products.ejs",
 //         // renderData: renderData,
 //       },
-//       { type: "navbar", name: PROJECT_PARTIALS + "/normal-navbar.ejs" },
+//       getNavbar(req),
 //     ],
 //     {
 //       url:
@@ -569,6 +552,24 @@ function sendJsonWithHtml(req, res, files, data) {
 //       return CHECKLIST_ITEMS[i];
 // }
 
+function redirectSignin(req, res) {
+  sendJsonWithHtml(
+    req,
+    res,
+    [
+      {
+        type: "main",
+        name: PROJECT_PARTIALS + "/signin.ejs",
+        // renderData: { title: res.title },
+      },
+      getNavbar(req),
+    ],
+    {
+      url: "/readyforbaby/signin",
+    }
+  );
+}
+
 /**
  * getFileAsString
  * Gets a file as string
@@ -596,4 +597,17 @@ function comparePassword(plainPass, hashword, callback) {
 
 function uppercase(str, i = 0) {
   return str.charAt(i).toUpperCase() + str.slice(1);
+}
+
+function getNavbar(req) {
+  let data = [];
+  if (req.session.user && req.cookies.user_sid) {
+    console.log(req.session.user);
+    data.push(req.session.user);
+  }
+  return {
+    type: "navbar",
+    name: PROJECT_PARTIALS + "/normal-navbar.ejs",
+    renderData: { data: data },
+  };
 }

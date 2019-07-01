@@ -20,18 +20,21 @@
     </span> -->
   </div>
 
-  <div class="col-xs-3 text-right">
-    <a onclick="ajax('/categories', '/readyforbaby')" class="mr-4 pointer"
-      >Categories</a
-    >
+  <div class="col-xs-2 text-right">
     <a onclick="ajax('/checklist', '/readyforbaby')" class="mr-4 pointer"
       >Checklist</a
     >
     <a onclick="ajax('/registry', '/readyforbaby')" class="mr-4 pointer"
       >Registry</a
     >
+    <% if (data.length === 0) { %>
     <a onclick="ajax('/signin', '/readyforbaby')" class="sign-in-navbar pointer"
       >Sign in</a
     >
+    <% } else { %>
+      <a class="sign-in-navbar"
+      ><%= data[0].name.first %></a
+    >
+    <% } %>
   </div>
 </div>

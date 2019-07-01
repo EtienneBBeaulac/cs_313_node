@@ -1,5 +1,7 @@
 const app = require("express");
 const path = require("path");
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
 const rfb = require("./readyforbaby");
 const ta = require("./team-activities");
 
@@ -13,15 +15,41 @@ const POSTAL = {
   retail: "First-Class Package Service—Retail",
 };
 
+var sessionChecker = (req, res, next) => {
+  if (req.session.user && req.cookies.user_sid) {
+    res.redirect("/readyforbaby");
+  } else {
+    next();
+  }
+};
+
 app()
-  .use('/static', app.static(path.join(__dirname, "public")))
+  .use("/static", app.static(path.join(__dirname, "public")))
   .use(app.urlencoded({ extended: true }))
   .use(app.json())
+  .use(cookieParser())
+  .use(
+    session({
+      key: "user_sid",
+      secret: "somerandonstuffs",
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        expires: 600000,
+      },
+    })
+  )
+  .use((req, res, next) => {
+    if (req.cookies.user_sid && !req.session.user) {
+      res.clearCookie("user_sid");
+    }
+    next();
+  })
   .set("views", path.join(__dirname, "views"))
   .set("view engine", "ejs")
   .get("/", (req, res) => res.render("pages/index"))
   ////////// READYFORBABY ///////////
-  .get("/readyforbaby", rfb.getWelcome)
+  .get("/readyforbaby", rfb.getCategories)
   .get("/readyforbaby/signin", rfb.getSignin)
   .get("/readyforbaby/signup", rfb.getSignup)
   .get("/readyforbaby/registry", rfb.getRegistry)
@@ -31,18 +59,39 @@ app()
   .get("/readyforbaby/checklist", rfb.getChecklist)
   .post("/readyforbaby/addChecklistItem", rfb.addChecklistItem)
   .get("/readyforbaby/checklist/:checklistItem", rfb.getChecklistItem)
-  .get("/readyforbaby/checklist/:checklistItem/:choice", rfb.getChoiceCategories)
+  .get(
+    "/readyforbaby/checklist/:checklistItem/:choice",
+    rfb.getChoiceCategories
+  )
   .get("/readyforbaby/getAllChoiceCategories", rfb.getAllChoiceCategories)
   .get("/readyforbaby/getAllProducts", rfb.getAllProducts)
   .get("/readyforbaby/getAllProductCategories", rfb.getAllProductCategories)
   .get("/readyforbaby/getProductCategory", rfb.getProductCategory)
+  .get("/readyforbaby/:category", rfb.getCategory)
+  .get("/readyforbaby/logout", (req, res) => {
+    if (req.session.user && req.cookies.user_sid) {
+      res.clearCookie("user_sid");
+      res.redirect("/readyforbaby");
+    } else {
+      res.redirect("/readyforbaby/login");
+    }
+  })
   .post("/readyforbaby/addCategories", rfb.addCategories)
-  .post("/readyforbaby/addChoicesToChecklistItem", rfb.addChoicesToChecklistItem)
+  .post(
+    "/readyforbaby/addChoicesToChecklistItem",
+    rfb.addChoicesToChecklistItem
+  )
   .post("/readyforbaby/addProduct", rfb.addProduct)
   .post("/readyforbaby/addProductCategory", rfb.addProductCategory)
-  .post("/readyforbaby/addProductsToProductCategory", rfb.addProductsToProductCategory)
+  .post(
+    "/readyforbaby/addProductsToProductCategory",
+    rfb.addProductsToProductCategory
+  )
   .post("/readyforbaby/addChoiceCategory", rfb.addChoiceCategory)
-  .post("/readyforbaby/addProductCategoriesToChoice", rfb.addProductCategoriesToChoice)
+  .post(
+    "/readyforbaby/addProductCategoriesToChoice",
+    rfb.addProductCategoriesToChoice
+  )
   .post(
     "/readyforbaby/signin",
     [
