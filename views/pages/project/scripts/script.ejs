@@ -53,7 +53,10 @@
     ajax();
   }
 
-  $("form").submit(e => {
+  $("#signin").submit(e => {
+    e.preventDefault();
+  });
+  $("#signup").submit(e => {
     e.preventDefault();
   });
 

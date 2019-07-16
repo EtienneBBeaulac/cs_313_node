@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test Form</title>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      function login() {
+        var username = $("#username").val();
+        var password = $("#password").val();
+
+        var params = {
+          username: username,
+          password: password,
+        };
+
+        $.post("/team-activities/12/login", params, function(result) {
+          if (result && result.success) {
+            $("#status").text("Successfully logged in.");
+          } else {
+            $("#status").text("Error logging in.");
+          }
+        });
+      }
+
+      function logout() {
+        $.post("/team-activities/12/logout", function(result) {
+          if (result && result.success) {
+            $("#status").text("Successfully logged out.");
+          } else {
+            $("#status").text("Error logging out.");
+          }
+        });
+      }
+
+      function getServerTime() {
+        $.get("/team-activities/12/getServerTime", function(result) {
+          if (result && result.success) {
+            $("#status").text("Server time: " + result.time);
+          } else {
+            $("#status").text(
+              "Got a result back, but it wasn't a success. Your reponse should have had a 401 status code."
+            );
+          }
+        }).fail(function(result) {
+          $("#status").text("Could not get server time.");
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div>
+      <input type="text" id="username" placeholder="username" /><br />
+      <input type="password" id="password" placeholder="password" /><br />
+      <button onclick="login();">Log in</button>
+      <button onclick="logout();">Log out</button><br />
+      <br />
+      <button onclick="getServerTime()">Get server time</button>
+      <div id="status"></div>
+    </div>
+  </body>
+</html>

@@ -4,6 +4,8 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const rfb = require("./readyforbaby");
 const ta = require("./team-activities");
+const db = require("./db");
+const bcrypt = require("bcrypt");
 
 const { check, sanitizeBody } = require("express-validator");
 const PORT = process.env.PORT || 5000;
@@ -40,6 +42,7 @@ app()
     })
   )
   .use((req, res, next) => {
+    console.log(req.url);
     if (req.cookies.user_sid && !req.session.user) {
       res.clearCookie("user_sid");
     }
@@ -134,6 +137,81 @@ app()
   )
   .get("/team-activities/10/getPerson", ta.getPerson)
   .post("/team-activities/10/addPerson", ta.addPerson)
+  ////////// TA 11 //////////
+  .get("/team-activities/11", (req, res) =>
+    res.render("pages/team-activities/team-11/main.ejs")
+  )
+  ////////// TA 12 //////////
+  .use((req, res, next) => {
+    console.log("Received a request for: " + req.url);
+    next();
+  })
+  .get("/team-activities/12", (req, res) =>
+    res.render("pages/team-activities/team-12/test.ejs")
+  )
+  .post("/team-activities/12/login", (req, res) => {
+    console.log("received");
+    let success = false;
+    let username = req.body.username;
+    let password = req.body.password;
+    db.Team12.findOne({ username: username }).exec(function(err, result) {
+      if (err) res.json({ success: false });
+      else if (result) {
+        rfb.comparePassword(password, result.password, (err, user) => {
+          if (user) {
+            success = true;
+            req.session.username = username;
+          } else {
+            success = false;
+          }
+          res.json({ success: success });
+        });
+      } else {
+        res.json({ success: false });
+      }
+    });
+  })
+  .post("/team-activities/12/signup", (req, res) => {
+    db.Team12.findOne({ username: req.body.username }).exec(function(
+      err,
+      result
+    ) {
+      if (!result)
+        rfb.cryptPassword(req.body.password, function(err, pw) {
+          let newUser = db.Team12({
+            username: req.body.username,
+            password: pw,
+          });
+          newUser.save(function(err) {
+            if (err) res.json({ status: false });
+            else {
+              res.json({ status: true });
+            }
+          });
+        });
+    });
+  })
+  .post("/team-activities/12/logout", (req, res) => {
+    if (req.session.username) {
+      res.clearCookie("user_sid");
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
+    }
+  })
+  .get(
+    "/team-activities/12/getServerTime",
+    (req, res, next) => {
+      if (req.session.username) {
+        next();
+      } else {
+        res.status(401).json({ message: "Not logged in." });
+      }
+    },
+    (req, res) => {
+      res.json({ success: true, time: new Date() });
+    }
+  )
   /******************************* ASSIGNMENTS *******************************/
   //////// PONDER 09 /////////
   .get("/assignments/09", (req, res) =>

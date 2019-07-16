@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Team 11</title>
+  </head>
+  <body>
+    <input type="text" name="search" id="search" />
+    <button onclick="search()">Search</button><br />
+    <hr />
+    <br /><br />
+    <div class="" id="movies"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script>
+      function search() {
+        let s = $("#search").val();
+        $.get("http://www.omdbapi.com/?apikey=186632a1&s=" + s, data => {
+          console.log(data);
+          let html = "";
+          for (let i = 0; i < data.Search.length; i++) {
+            let idLink = "showDetails('" + data.Search[i].imdbID + "')";
+            let id = data.Search[i].imdbID;
+            html +=
+              "<div id='" +
+              id +
+              "'>Tile: " +
+              data.Search[i].Title +
+              "<br>Year: " +
+              data.Search[i].Year +
+              "<div id='details-" +
+              id +
+              "'></div>" +
+              "<button id='details-btn-" +
+              id +
+              "'" +
+              ' onclick="' +
+              idLink +
+              '">Show details</button></div>' +
+              "<hr><br>";
+          }
+          $("#movies").html(html);
+        });
+      }
+      function showDetails(id) {
+        console.log(id);
+        $("#details-btn-" + id).hide();
+        $.get("http://www.omdbapi.com/?apikey=186632a1&i=" + id, data => {
+          console.log(data);
+          let image = '<img src="' + data.Poster + '">';
+          let actors = "<p>" + data.Actors + "</p>";
+          let runtime = "<p>" + data.Runtime + "</p>";
+          $("#details-" + id).html(image + actors + runtime);
+        });
+      }
+    </script>
+  </body>
+</html>

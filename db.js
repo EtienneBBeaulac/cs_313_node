@@ -83,6 +83,13 @@ let registrySchema = new Schema({
 
 let Registry = mongoose.model("Registry", registrySchema);
 
+let team12Schema = new Schema({
+  username: { type: String, trim: true, require: true },
+  password: { type: String, trim: true, require: true },
+});
+
+let Team12 = mongoose.model("team_12", team12Schema);
+
 module.exports = {
   Person,
   User,
@@ -92,4 +99,5 @@ module.exports = {
   Product,
   Category,
   Registry,
+  Team12
 };
