@@ -144,9 +144,21 @@ body {
 
 .product-box {
   min-height: 300px;
+  min-width: 200px;
+  padding: 5px;
   background-color: white;
   border: 1px solid #707070;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.product-box img {
+  max-height: auto;
 }
 
 .badge {
@@ -154,8 +166,14 @@ body {
 }
 
 .product-cat {
+  font-size: 24px;
+  font-weight: normal;
   margin-right: 10px;
-  display: inline-flex;
+  display: inline-flex; 
+}
+
+.recommendation {
+  color: #707070;
 }
 
 .product-info {

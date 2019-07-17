@@ -1,13 +1,11 @@
-<div class="text-center">
-  <h2 id="page-title"><%= title %></h2>
-</div>
+<h2 class="mb-5"><%= title %></h2>
 <% for (let i = 0; i < productCategories.length; i++) { %>
-<div class="row mb-5">
+<div class="row mb-2">
   <div class="col-md-12 mb-3">
     <h3 class="product-cat"><%= productCategories[i].title %></h3>
     <span class="badge badge-danger">must-have</span>
     <% if (productCategories[i].description && productCategories[i].description !== "") { %>
-    <h6>(<%= productCategories[i].description %>)</h6>
+    <h6 class="recommendation">(<%= productCategories[i].description %>)</h6>
     <% } %>
   </div>
 </div>
@@ -16,21 +14,15 @@
 % 3 === 0) { %>
 <div class="row">
   <% } %>
-  <div class="col-md-2 mr-5 ml-1 mb-5 row product-box text-center">
-    <div class="product-info col-xs-12">
-      <img
-        src="<%= productCategories[i].products[j].imageLink %>"
-        alt="<%= productCategories[i].products[j].title.toLowerCase() %>"
-      />
-      <div class=""><%= productCategories[i].products[j].title %></div>
-    </div>
-    <div class="product-links col-xs-12">
-      <a class="btn" href="<%= productCategories[i].products[j].link %>"
+  <figure class="col-md-2 mr-5 ml-1 mb-5 product-box text-center">
+    <img class="cat-img" src="<%= productCategories[i].products[j].imageLink %>" alt="<%= productCategories[i].products[j].title.toLowerCase() %>" />
+    <figcaption class="pr-2 pl-2"><%= productCategories[i].products[j].title %></figcaption>
+    <figcaption class="pt-3 pb-2"><a class="btn bold" href="<%= productCategories[i].products[j].link %>"
         >Go to Store</a
       >
-      <div class="btn" onclick="addToRegistry('<%= productCategories[i].products[j].title %>')">Add to Registry</div>
-    </div>
-  </div>
+      <div class="btn bold pointer" onclick="addToRegistry('<%= productCategories[i].products[j].title %>')">Add to Registry</div></figcaption>
+  </figure>
+  
   <% if (j % 3 === 2) { %>
 </div>
 <% } %> <% } %> <% } %>
