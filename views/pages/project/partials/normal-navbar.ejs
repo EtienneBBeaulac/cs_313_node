@@ -6,14 +6,24 @@
     <h1>ReadyForBaby</h1>
   </div>
 
-  <div class="input-group col-sm-6">
+  <form
+    id="searchForm"
+    action="/readyforbaby/search"
+    method="get"
+    class="input-group col-sm-6"
+    onsubmit="weirdSearch(); return false;"
+  >
     <input
       class="form-control rounded-pill"
       id="main-search"
       type="search"
       placeholder="What can we help you find?"
+      name="search"
+      required
     />
-  </div>
+    <input type="text" style="display: none;" name="r" value="0" />
+    <input type="submit" style="display: none;" />
+  </form>
 
   <div class="col-xs-2 text-right">
     <a onclick="ajax('/checklist', '/readyforbaby')" class="mr-4 pointer"
@@ -27,9 +37,7 @@
       >Sign in</a
     >
     <% } else { %>
-      <a class="sign-in-navbar"
-      ><%= data[0].name.first %></a
-    >
+    <a class="sign-in-navbar"><%= data[0].name.first %></a>
     <!-- <a href="/readyforbaby/logout" class="mr-4 pointer"
       >Log out</a
     > -->

@@ -6,6 +6,7 @@ const db = require("./db");
 const { validationResult } = require("express-validator");
 const PROJECT_PAGES = "pages/project/pages";
 const PROJECT_PARTIALS = "views/pages/project/partials";
+const fuzzyset = require("fuzzyset.js");
 
 exports.getWelcome = function getWelcome(req, res) {
   sendJsonWithHtml(
@@ -18,6 +19,38 @@ exports.getWelcome = function getWelcome(req, res) {
     { url: "/readyforbaby" }
   );
 };
+
+function search(req, res) {
+  db.Product.find({}).exec((err, results) => {
+    if (!err && results) {
+      let matches = [];
+      let search = req.query.search;
+      if (!search) search = req.params.search;
+      results.forEach(product => {
+        if (product.title.match(RegExp(search, "gi")))
+          matches.push(product);
+      });
+      console.log(matches)
+      sendJsonWithHtml(
+        req,
+        res,
+        [
+          {
+            type: "main",
+            name: PROJECT_PARTIALS + "/search.ejs",
+            renderData: { data: matches, title: search },
+          },
+          getNavbar(req),
+        ],
+        {
+          url: "/readyforbaby/search/" + search,
+        }
+      );
+    }
+  });
+}
+
+exports.search = search;
 
 exports.getSignin = function(req, res) {
   if (!req.session.user || !req.cookies.user_sid) {
@@ -35,7 +68,7 @@ exports.getSignin = function(req, res) {
   }
 };
 
-function signin(req, res, email="", pw="") {
+function signin(req, res, email = "", pw = "") {
   console.log(req.body);
   if (email === "") email = req.body.email;
   if (pw === "") pw = req.body.pw;
@@ -52,8 +85,8 @@ function signin(req, res, email="", pw="") {
     } else {
       sendError(res, "Invalid login");
     }
-  }); 
-};
+  });
+}
 
 exports.signin = signin;
 
@@ -571,6 +604,7 @@ function sendJsonWithHtml(req, res, files, data) {
     else html[file.type] = ejs.render(fileString, file.renderData);
   });
   // console.log({ html: html, data: data });
+  console.log({ html: html, data: data });
   if (req.query.r && req.query.r == 0) {
     res.json({ html: html, data: data });
   } else {

@@ -59,6 +59,20 @@
   $("#signup").submit(e => {
     e.preventDefault();
   });
+  // $("#searchForm").submit(e => {
+  //   e.preventDefault();
+  //   weirdSearch();
+  // });
+
+  function weirdSearch() {
+    form = $("#searchForm");
+    let url = form.attr("action");
+    let method = form.attr("method");
+    let data = form.serialize();
+    console.log(form + url + method + data);
+    sendAjaxWith(method, url, data, pageCallback);
+    return false;
+  }
 
   $(function() {
     $("form[name='signin']").validate({
@@ -139,10 +153,10 @@
     });
   });
 
-  function pageCallback(data, pushState=true) {
-    console.log(data)
+  function pageCallback(data, pushState = true) {
+    console.log(data);
     if (!data.html) {
-      $('#err').html(data.err);
+      $("#err").html(data.err);
       return;
     }
     if (data.html.navbar) {

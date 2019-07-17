@@ -17,12 +17,13 @@
     "express": "4.17.1",
     "express-session": "1.16.2",
     "express-validator": "6.0.1",
+    "fuzzyset.js": "0.0.8",
     "mongoose": "5.6.1",
     "nodemon": "1.19.1"
   },
   "devDependencies": {
     "request": "^2.81.0",
-    "tape": "^4.7.0"
+    "tape": "4.11.0"
   },
   "repository": {
     "type": "git",

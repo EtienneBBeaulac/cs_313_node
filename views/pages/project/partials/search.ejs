@@ -1,0 +1,32 @@
+<% if (data.length == 0) { %>
+<div class="text-center">
+    <h2 id="page-title">No results for "<%= title %>"</h2>
+  </div>
+  <% } else { %>
+<div class="text-center">
+    <h2 id="page-title">Results for "<%= title %>"</h2>
+  </div>
+
+  <% for (let j = 0; j < data.length; j++) { %> <% if (j
+  % 3 === 0) { %>
+  <div class="row mt-5">
+    <% } %>
+    <div class="col-md-2 mr-5 ml-1 mb-5 row product-box text-center">
+      <div class="product-info col-xs-12">
+        <img
+          src="<%= data[j].imageLink %>"
+          alt="<%= data[j].title.toLowerCase() %>"
+        />
+        <div class=""><%= data[j].title %></div>
+      </div>
+      <div class="product-links col-xs-12">
+        <a class="btn" href="<%= data[j].link %>"
+          >Go to Store</a
+        >
+        <div class="btn" onclick="addToRegistry('<%= data[j].title %>')">Add to Registry</div>
+      </div>
+    </div>
+    <% if (j % 3 === 2) { %>
+  </div>
+  <% } %> <% } %> <% } %>
+  

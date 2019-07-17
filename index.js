@@ -53,6 +53,8 @@ app()
   .get("/", (req, res) => res.render("pages/index"))
   ////////// READYFORBABY ///////////
   .get("/readyforbaby", rfb.getCategories)
+  .get("/readyforbaby/search", rfb.search)
+  .get("/readyforbaby/search/:search", rfb.search)
   .get("/readyforbaby/signin", rfb.getSignin)
   .get("/readyforbaby/signup", rfb.getSignup)
   .get("/readyforbaby/registry", rfb.getRegistry)

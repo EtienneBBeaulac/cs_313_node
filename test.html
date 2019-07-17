@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>ReadyForBaby</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"><script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/stylesheets/style.css" />
+
+  </head>
+  <body>
+    <div class="container-fluid" id="navbar">
+      <div
+  class="row justify-content-between align-items-center pr-4 pl-4 pt-2 pb-2"
+  id="navbar-main"
+>
+  <div class="col-sm-3 pointer" onclick="ajax('', '/readyforbaby')">
+    <h1>ReadyForBaby</h1>
+  </div>
+
+  <form
+    id="searchForm"
+    action="/readyforbaby/search"
+    method="get"
+    class="input-group col-sm-6"
+  >
+    <input
+      class="form-control rounded-pill"
+      id="main-search"
+      type="search"
+      placeholder="What can we help you find?"
+      name="search"
+      required
+    />
+    <input type="submit" style="display: none;" />
+  </form>
+
+  <div class="col-xs-2 text-right">
+    <a onclick="ajax('/checklist', '/readyforbaby')" class="mr-4 pointer"
+      >Checklist</a
+    >
+    <a onclick="ajax('/registry', '/readyforbaby')" class="mr-4 pointer"
+      >Registry</a
+    >
+    
+    <a onclick="ajax('/signin', '/readyforbaby')" class="sign-in-navbar pointer"
+      >Sign in</a
+    >
+    
+  </div>
+</div>
+
+    </div>
+
+    <div class="container mt-5" id="main-page">
+        <div class="text-center">
+    <h2 id="page-title">bottle</h2>
+  </div>
+
+   
+  <div class="row">
+    
+    <div class="col-md-2 mr-5 ml-1 mb-5 row product-box text-center">
+      <div class="product-info col-xs-12">
+        <img
+          src="https://images-na.ssl-images-amazon.com/images/I/71ApDFkV0uL._SX522_.jpg"
+          alt="comotomo baby bottle"
+        />
+        <div class="">Comotomo Baby Bottle</div>
+      </div>
+      <div class="product-links col-xs-12">
+        <a class="btn" href="https://www.amazon.com/Comotomo-Bottle-Green-Ounce-Count/dp/B009QXDE46/ref=sr_1_3?crid=23U89MTUON7B1&amp;keywords=slow%2Bflow%2Bbaby%2Bbottles&amp;qid=1561834466&amp;s=gateway&amp;sprefix=slow%2Bflow%2B%2Caps%2C179&amp;sr=8-3&amp;th=1"
+          >Go to Store</a
+        >
+        <div class="btn" onclick="addToRegistry('Comotomo Baby Bottle')">Add to Registry</div>
+      </div>
+    </div>
+      
+    <div class="col-md-2 mr-5 ml-1 mb-5 row product-box text-center">
+      <div class="product-info col-xs-12">
+        <img
+          src="https://images-na.ssl-images-amazon.com/images/I/81SJ7IY1e2L._SX522_.jpg"
+          alt="dr. brown&#39;s options slow flow bottles"
+        />
+        <div class="">Dr. Brown&#39;s Options Slow Flow Bottles</div>
+      </div>
+      <div class="product-links col-xs-12">
+        <a class="btn" href="https://www.amazon.com/Dr-Browns-Options-Bottle-Breastfed/dp/B07DCQKC33/ref=sr_1_5?crid=23U89MTUON7B1&amp;keywords=slow+flow+baby+bottles&amp;qid=1561834489&amp;s=gateway&amp;sprefix=slow+flow+%2Caps%2C179&amp;sr=8-5"
+          >Go to Store</a
+        >
+        <div class="btn" onclick="addToRegistry('Dr. Brown&#39;s Options Slow Flow Bottles')">Add to Registry</div>
+      </div>
+    </div>
+      
+    <div class="col-md-2 mr-5 ml-1 mb-5 row product-box text-center">
+      <div class="product-info col-xs-12">
+        <img
+          src="https://images-na.ssl-images-amazon.com/images/I/512f62k8jGL._SX522_.jpg"
+          alt="lansinoh breastfeeding bottles"
+        />
+        <div class="">Lansinoh Breastfeeding Bottles</div>
+      </div>
+      <div class="product-links col-xs-12">
+        <a class="btn" href="https://www.amazon.com/Lansinoh-Breastmilk-NaturalWave-Resistant-Anti-Colic/dp/B00H0DH2NS/ref=sr_1_4?crid=23U89MTUON7B1&amp;keywords=slow%2Bflow%2Bbaby%2Bbottles&amp;qid=1561834489&amp;s=gateway&amp;sprefix=slow%2Bflow%2B%2Caps%2C179&amp;sr=8-4&amp;th=1"
+          >Go to Store</a
+        >
+        <div class="btn" onclick="addToRegistry('Lansinoh Breastfeeding Bottles')">Add to Registry</div>
+      </div>
+    </div>
+    
+  </div>
+    
+  <div class="row">
+    
+    <div class="col-md-2 mr-5 ml-1 mb-5 row product-box text-center">
+      <div class="product-info col-xs-12">
+        <img
+          src="https://target.scene7.com/is/image/Target/GUEST_d8e6ec4c-c2ee-4a6b-9e92-6f12bfd33ea4?wid=488&amp;hei=488&amp;fmt=webp"
+          alt="chicco® naturalfit slow flow glass bottles"
+        />
+        <div class="">Chicco® NaturalFit Slow Flow Glass Bottles</div>
+      </div>
+      <div class="product-links col-xs-12">
+        <a class="btn" href="https://www.target.com/p/chicco-174-naturalfit-slow-flow-glass-bottles-5oz-2pk-with-bonus-silicone-sleeve/-/A-52556575"
+          >Go to Store</a
+        >
+        <div class="btn" onclick="addToRegistry('Chicco® NaturalFit Slow Flow Glass Bottles')">Add to Registry</div>
+      </div>
+    </div>
+      
+    <div class="col-md-2 mr-5 ml-1 mb-5 row product-box text-center">
+      <div class="product-info col-xs-12">
+        <img
+          src="https://target.scene7.com/is/image/Target/GUEST_294349de-61e5-4a1c-b62a-915548c83f4d?wid=488&amp;hei=488&amp;fmt=webp"
+          alt="nanobebe breast milk bottle"
+        />
+        <div class="">Nanobebe Breast Milk Bottle</div>
+      </div>
+      <div class="product-links col-xs-12">
+        <a class="btn" href="https://www.target.com/p/nanobebe-breast-milk-bottle-5oz/-/A-53938991?preselect=75563389#lnk=sametab"
+          >Go to Store</a
+        >
+        <div class="btn" onclick="addToRegistry('Nanobebe Breast Milk Bottle')">Add to Registry</div>
+      </div>
+    </div>
+      
+    <div class="col-md-2 mr-5 ml-1 mb-5 row product-box text-center">
+      <div class="product-info col-xs-12">
+        <img
+          src="https://i5.walmartimages.com/asr/d3ec5af9-f4bf-4bd5-ab94-e860c67368ae_1.ee338c4fc7851dee58e01c329d1a6e35.jpeg?odnHeight=450&amp;odnWidth=450&amp;odnBg=FFFFFF"
+          alt="playtex baby ventaire bottles"
+        />
+        <div class="">Playtex Baby VentAire Bottles</div>
+      </div>
+      <div class="product-links col-xs-12">
+        <a class="btn" href="https://www.walmart.com/ip/Playtex-Baby-VentAire-Complete-Tummy-Comfort-9oz-5-Pack-Baby-Bottle/34074087"
+          >Go to Store</a
+        >
+        <div class="btn" onclick="addToRegistry('Playtex Baby VentAire Bottles')">Add to Registry</div>
+      </div>
+    </div>
+    
+  </div>
+    
+  
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.js"></script>
+<script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+<script>
+  const DIR = "readyforbaby/";
+
+  addEventListener("popstate", function(e) {
+    ajax(window.location.pathname, "", undefined, false);
+    e.preventDefault();
+  });
+
+  function ajax(
+    url = "",
+    dir = window.location,
+    query = "0",
+    pushState = true
+  ) {
+    if (query != "") {
+      query = "?r=" + query;
+    }
+    $.get(dir + url + query, function(data) {
+      if (!data.html) {
+        return;
+      }
+      if (data.html.navbar) {
+        $("#navbar").html(data.html.navbar);
+      }
+      if (data.html.main) {
+        $("#main-page").html(data.html.main);
+        if (pushState) window.history.pushState("", "", data.data.url);
+      }
+      $("html").show();
+      console.log(window.location);
+    });
+  }
+
+  function addToRegistry(title) {
+    sendAjaxWith(
+      "POST",
+      "/readyforbaby/addToRegistry?r=0",
+      { product: { title: title } },
+      function(result) {
+        if (!result.message) {
+          pageCallback(result);
+        } else {
+          console.log(result);
+        }
+      }
+    );
+  }
+
+  function getPage() {
+    console.log(window.location);
+    ajax();
+  }
+
+  $("#signin").submit(e => {
+    e.preventDefault();
+  });
+  $("#signup").submit(e => {
+    e.preventDefault();
+  });
+  $("#searchForm").submit(e => {
+    e.preventDefault();
+    form = $("#searchForm");
+    let url = form.attr("action");
+    let method = form.attr("method");
+    let data = form.serialize();
+    console.log(form + url + method + data);
+    sendAjaxWith(method, url, data, pageCallback);
+  });
+
+  $(function() {
+    $("form[name='signin']").validate({
+      rules: {
+        email: {
+          required: true,
+          email: true,
+        },
+        password: {
+          required: true,
+          minlength: 8,
+        },
+      },
+
+      messages: {
+        email: "Please enter a valid email address",
+        password: {
+          required: "Please provide a password",
+          minlength: "Your password must be at least 8 characters long",
+        },
+      },
+
+      submitHandler: function(form) {
+        if ($(".error").length > 0) return;
+
+        form = $("#signin");
+        let url = form.attr("action");
+        let method = form.attr("method");
+        let data = form.serialize();
+
+        sendAjaxWith(method, url, data, pageCallback);
+      },
+    });
+  });
+
+  $(function() {
+    $("form[name='signup']").validate({
+      rules: {
+        first: "required",
+        first: "required",
+        email: {
+          required: true,
+          email: true,
+        },
+        password: {
+          required: true,
+          minlength: 8,
+        },
+        cpassword: {
+          required: true,
+          equalTo: "#password",
+        },
+      },
+
+      messages: {
+        first: "Please enter your first name",
+        first: "Please enter your last name",
+        email: "Please enter a valid email address",
+        password: {
+          required: "Please provide a password",
+          minlength: "Your password must be at least 8 characters long",
+        },
+        cpassword: {
+          required: "Please confirm your password",
+          equalTo: "Passwords do not match",
+        },
+      },
+
+      submitHandler: function(form) {
+        if ($(".error").length > 0) return;
+
+        let url = form.attr("action");
+        let method = form.attr("method");
+        let data = form.serialize();
+
+        sendAjaxWith(method, url, data, pageCallback);
+      },
+    });
+  });
+
+  function pageCallback(data, pushState = true) {
+    console.log(data);
+    if (!data.html) {
+      $("#err").html(data.err);
+      return;
+    }
+    if (data.html.navbar) {
+      $("#navbar").html(data.html.navbar);
+    }
+    if (data.html.main) {
+      $("#main-page").html(data.html.main);
+      if (pushState) window.history.pushState("", "", data.data.url);
+    }
+    $("html").show();
+    console.log(window.location);
+  }
+
+  function sendAjaxWith(method, url, data, callback) {
+    $.ajax({
+      type: method,
+      url: url,
+      data: data,
+      success: callback,
+    });
+  }
+</script>
+
+
+  </body>
+</html>
