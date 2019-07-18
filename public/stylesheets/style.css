@@ -81,6 +81,14 @@ body {
   color: blue;
 }
 
+.jumbotron {
+  background: transparent;
+}
+
+.categories {
+  margin-bottom: 20%;
+}
+
 .btn-pink:hover {
   color: white;
   border: 1px solid #707070;
