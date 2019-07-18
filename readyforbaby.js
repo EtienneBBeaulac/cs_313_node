@@ -2,6 +2,7 @@ const fs = require("fs");
 const ejs = require("ejs");
 const path = require("path");
 const bcrypt = require("bcrypt");
+const url = require("url");
 const db = require("./db");
 const { validationResult } = require("express-validator");
 const PROJECT_PAGES = "pages/project/pages";
@@ -27,10 +28,9 @@ function search(req, res) {
       let search = req.query.search;
       if (!search) search = req.params.search;
       results.forEach(product => {
-        if (product.title.match(RegExp(search, "gi")))
-          matches.push(product);
+        if (product.title.match(RegExp(search, "gi"))) matches.push(product);
       });
-      console.log(matches)
+      // console.log(matches)
       sendJsonWithHtml(
         req,
         res,
@@ -69,14 +69,14 @@ exports.getSignin = function(req, res) {
 };
 
 function signin(req, res, email = "", pw = "") {
-  console.log(req.body);
+  // console.log(req.body);
   if (email === "") email = req.body.email;
   if (pw === "") pw = req.body.pw;
   db.User.findOne({ email: req.body.email }).exec(function(err, result) {
-    console.log(result);
+    // console.log(result);
     if (!err && result) {
       comparePassword(req.body.password, result.password, (err, user) => {
-        console.log(user);
+        // console.log(user);
         if (user) {
           req.session.user = result;
           res.redirect("/readyforbaby/registry");
@@ -107,7 +107,7 @@ exports.getSignup = function(req, res) {
 };
 
 exports.signup = function(req, res) {
-  console.log(req.body);
+  // console.log(req.body);
   let first = req.body.first;
   let last = req.body.last;
   let email = req.body.email;
@@ -185,7 +185,7 @@ exports.getRegistry = function(req, res) {
 };
 
 exports.addToRegistry = function(req, res) {
-  console.log(req.body);
+  // console.log(req.body);
   if (req.session.user && req.cookies.user_sid) {
     db.Product.findOne({ title: req.body.product.title }).exec(
       (err, product) => {
@@ -300,7 +300,7 @@ exports.addCategories = function(req, res) {
  */
 exports.getChecklist = function getChecklist(req, res) {
   db.ChecklistItem.find({}, "title skip", (err, data) => {
-    console.log(data[4]);
+    // console.log(data[4]);
     sendJsonWithHtml(
       req,
       res,
@@ -356,7 +356,7 @@ exports.getChecklistItem = function(req, res) {
   db.ChecklistItem.findOne({ title: uppercase(req.params["checklistItem"]) })
     .populate({ path: "choices", model: "Choice" })
     .exec((err, data) => {
-      console.log(data);
+      // console.log(data);
       if (!data) return;
       if (err) console.log(err);
       for (let i = 0; i < data.choices.length; i++)
@@ -604,7 +604,7 @@ function sendJsonWithHtml(req, res, files, data) {
     else html[file.type] = ejs.render(fileString, file.renderData);
   });
   // console.log({ html: html, data: data });
-  console.log({ html: html, data: data });
+  // console.log({ html: html, data: data });
   if (req.query.r && req.query.r == 0) {
     res.json({ html: html, data: data });
   } else {
@@ -617,7 +617,7 @@ function sendJsonWithHtml(req, res, files, data) {
 }
 
 function redirectSignin(req, res) {
-  console.log("redirected to sign in");
+  // console.log("redirected to sign in");
   sendJsonWithHtml(
     req,
     res,
@@ -665,10 +665,25 @@ function uppercase(str, i = 0) {
 }
 
 function getNavbar(req) {
-  let data = [];
+  let data = {};
   if (req.session.user && req.cookies.user_sid) {
     console.log(req.session.user);
-    data.push(req.session.user);
+    data.user = req.session.user;
+  }
+  // data.push({paths: url.parse(req.url).pathname.split('/')})
+  let paths = url
+    .parse(req.url)
+    .pathname.substr(1)
+    .split("/");
+  data.paths = [];
+  let totalPath = "";
+  for (let i = 0; i < paths.length; ++i) {
+    let name = paths[i];
+    if (paths[i] === "readyforbaby") name = "home";
+    if (i !== 0 && name === paths[i - 1]) continue;
+    name = name.split("-").join(" ");
+    totalPath += "/" + paths[i];
+    data.paths.push({ name: name, href: totalPath });
   }
   return {
     type: "navbar",

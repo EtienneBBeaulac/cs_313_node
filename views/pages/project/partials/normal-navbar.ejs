@@ -32,7 +32,7 @@
     <a onclick="ajax('/registry', '/readyforbaby')" class="mr-4 pointer"
       >Registry</a
     >
-    <% if (data.length === 0) { %>
+    <% if (!data.user) { %>
     <a onclick="ajax('/signin', '/readyforbaby')" class="sign-in-navbar pointer"
       >Sign in</a
     >
@@ -44,3 +44,18 @@
     <% } %>
   </div>
 </div>
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <% for (let i = 0; i < data.paths.length; ++i) { %>
+    <li
+      class="breadcrumb-item <% if (i + 1 === data.paths.length) { %>active<% } %>"
+      aria-current="page"
+    >
+      <% if (i + 1 !== data.paths.length) { %><a
+        href="<%= data.paths[i].href %>"
+        ><%= data.paths[i].name %></a
+      ><% } else { %> <%= data.paths[i].name %> <% } %>
+    </li>
+    <%}%>
+  </ol>
+</nav>
