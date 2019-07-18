@@ -1,7 +1,22 @@
+<h2>Welcome.</h2>
+<p>
+  This website is designed to help expecting mothers find the products that they
+  absolutely need as the birth of their little one gets nearer.
+</p>
+<p>
+  If you are not sure what do get or what to do,
+  <button class="link" onclick="ajax('/checklist')">click here</button> to enter the guided
+  portion of the website
+</p>
+
 <div class="row justify-content-center mt-5">
   <% for (let i = 0; i < categories.length; i++) { %>
   <figure class="category" onclick="ajax('/<%= categories[i].link %>')">
-    <img class="cat-img" src="/static/<%= categories[i].image %>.png" alt="<%= categories[i].image %>" />
+    <img
+      class="cat-img"
+      src="/static/<%= categories[i].image %>.png"
+      alt="<%= categories[i].image %>"
+    />
     <figcaption><%= categories[i].title %></figcaption>
   </figure>
   <% } %>

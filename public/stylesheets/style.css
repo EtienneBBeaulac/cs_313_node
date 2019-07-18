@@ -70,6 +70,17 @@ body {
   background: transparent;
 }
 
+.link {
+  text-decoration: underline;
+  padding: 0;
+  border: none;
+  background: none;
+}
+
+.link:hover {
+  color: blue;
+}
+
 .btn-pink:hover {
   color: white;
   border: 1px solid #707070;
@@ -173,7 +184,7 @@ body {
   font-size: 24px;
   font-weight: normal;
   margin-right: 10px;
-  display: inline-flex; 
+  display: inline-flex;
 }
 
 .recommendation {
@@ -185,7 +196,8 @@ body {
   padding: 16px 0px;
 }
 
-.product-links div, .product-links a {
+.product-links div,
+.product-links a {
   cursor: pointer;
   font-weight: bold;
   font-size: 12px;
