@@ -17,10 +17,11 @@
   <figure class="col-md-2 mr-5 ml-1 mb-5 product-box text-center">
     <img class="cat-img" src="<%= productCategories[i].products[j].imageLink %>" alt="<%= productCategories[i].products[j].title.toLowerCase() %>" />
     <figcaption class="pr-2 pl-2"><%= productCategories[i].products[j].title %></figcaption>
-    <figcaption class="pt-3 pb-2"><a class="btn bold" href="<%= productCategories[i].products[j].link %>"
+    <figcaption class="pt-3"><a class="btn bold" href="<%= productCategories[i].products[j].link %>"
         >Go to Store</a
-      >
-      <div class="btn bold pointer" onclick="addToRegistry('<%= productCategories[i].products[j].title %>')">Add to Registry</div></figcaption>
+      ></figcaption>
+      <figcaption class="pb-2">
+      <div class="btn bold pointer" id="addToRegistry<%= i %><%= j %>" onclick="addToRegistry('<%= productCategories[i].products[j].title %>', '<%= i %><%= j %>')">Add to Registry</div></figcaption>
   </figure>
   
   <% if (j % 3 === 2) { %>

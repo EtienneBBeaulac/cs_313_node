@@ -33,16 +33,24 @@
     });
   }
 
-  function addToRegistry(title) {
+  function addToRegistry(title, itemId) {
+    let id = '#addToRegistry' + itemId;
+    $(id).html('');
     sendAjaxWith(
       "POST",
       "/readyforbaby/addToRegistry?r=0",
       { product: { title: title } },
       function(result) {
         if (!result.message) {
+          $(id).html('Added');
+          $(id).css('color', 'green');
+          $(id).removeClass('pointer');
+          $(id).removeAttr('onclick');
           pageCallback(result);
         } else {
           console.log(result);
+          $(id).html('Error');
+          $(id).css('color', 'red');
         }
       }
     );

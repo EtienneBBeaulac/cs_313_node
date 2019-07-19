@@ -1,6 +1,6 @@
 <h2 class="mb-5 text-center" id="page-title">Registry</h2>
 
-<ul class="list-group">
+<ul class="list-group mb-5">
   <% if (data.products.length === 0) { %>
   <h3 class="text-center mt-5">Please add products to your registry.</h3>
   <% } %> <% for (let i = 0; i < data.products.length; i++) { %>
@@ -17,10 +17,8 @@
     <div class="col">
       <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1"><%= data.products[i].title %></h5>
-        <!-- <small>products[i].added</small> -->
       </div>
       <p class="mb-1">
-        <!-- < data.products[i].description %> -->
       </p>
     </div>
   </li>
