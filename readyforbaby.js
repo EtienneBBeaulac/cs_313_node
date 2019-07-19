@@ -213,6 +213,24 @@ exports.addToRegistry = function(req, res) {
   }
 };
 
+exports.removeRegistryItem = function(req, res){
+  if (req.session.user && req.cookies.user_sid) {
+    db.Registry.findOne({ email: req.session.user.email })
+      .populate({ path: "products", model: "Product" })
+      .exec((err, registry) => {
+        if (err) res.send(err);
+        registry.products.splice(parseInt(req.body.index), 1);
+        registry.save(err => {
+          console.log('saved')
+          if (err) res.json(err);
+          else res.json({status: "success"})
+        })
+      })
+  } else {
+    redirectSignin(req, res);
+  }
+}
+
 exports.getCategories = function(req, res) {
   db.Category.find({}, "title link image", (err, data) => {
     if (err) res.json(err);

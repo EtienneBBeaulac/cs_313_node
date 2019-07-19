@@ -56,6 +56,16 @@
     );
   }
 
+  function removeRegistryItem(item) {
+    $('#registryItem' + item).fadeOut("swing", () => $('#registryItem' + item).remove());
+    sendAjaxWith('DELETE', '/readyforbaby/removeRegistryItem', {index: item}, (result) => {
+      
+    })
+    if (!e) var e = window.event;
+    e.cancelBubble = true;
+    if (e.stopPropagation) e.stopPropagation();
+  }
+
   function getPage() {
     console.log(window.location);
     ajax();

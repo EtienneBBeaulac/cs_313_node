@@ -53,6 +53,7 @@ app()
   .get("/", (req, res) => res.render("pages/index"))
   ////////// READYFORBABY ///////////
   .get("/readyforbaby", rfb.getCategories)
+  .delete("/readyforbaby/removeRegistryItem", rfb.removeRegistryItem)
   .get("/readyforbaby/search", rfb.search)
   .get("/readyforbaby/search/:search", rfb.search)
   .get("/readyforbaby/signin", rfb.getSignin)

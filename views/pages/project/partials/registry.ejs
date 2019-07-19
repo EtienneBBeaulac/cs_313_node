@@ -7,6 +7,7 @@
   <li
     class="list-group-item d-flex align-items-center pointer"
     onclick="window.location = '<%= data.products[i].link %>'"
+    id="registryItem<%= i %>"
   >
     <div class="col-md-2">
       <img
@@ -18,9 +19,9 @@
       <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1"><%= data.products[i].title %></h5>
       </div>
-      <p class="mb-1">
-      </p>
+      <p class="mb-1"></p>
     </div>
+    <i class="fas fa-trash" style="color: red; padding: 30px" onclick="removeRegistryItem('<%= i %>')"></i>
   </li>
   <% } %>
 </ul>
